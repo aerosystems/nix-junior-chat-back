@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/aerosystems/nix-junior-chat-back/internal/helpers"
+	"github.com/labstack/echo/v4"
 )
 
 type LoginRequestBody struct {

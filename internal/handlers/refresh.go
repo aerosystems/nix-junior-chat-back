@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
+	"github.com/labstack/echo/v4"
 )
 
 type RefreshTokenRequestBody struct {

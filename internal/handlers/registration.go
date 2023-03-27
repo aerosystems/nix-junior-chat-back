@@ -7,6 +7,7 @@ import (
 
 	"github.com/aerosystems/nix-junior-chat-back/internal/helpers"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
+	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
+	"github.com/go-redis/redis/v7"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 )

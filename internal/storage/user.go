@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
+	"github.com/go-redis/redis/v7"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
