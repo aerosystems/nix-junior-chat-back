@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Simple REST API for CRUD operations with Comments \u0026 Posts entities.",
-        "title": "NIX Trainee 5-6-7-8 tasks",
+        "description": "Backend App for simple social Live Chat",
+        "title": "NIX Junior: Chat App",
         "contact": {
             "name": "Artem Kostenko",
             "url": "https://github.com/aerosystems"
@@ -16,15 +16,13 @@
     "host": "localhost:8080",
     "basePath": "/v1",
     "paths": {
-        "/tokens/refresh": {
+        "/token/refresh": {
             "post": {
                 "consumes": [
-                    "application/json",
-                    "text/xml"
+                    "application/json"
                 ],
                 "produces": [
-                    "application/json",
-                    "application/xml"
+                    "application/json"
                 ],
                 "tags": [
                     "auth"
@@ -82,15 +80,13 @@
                 }
             }
         },
-        "/users/confirmation": {
+        "/user/confirm": {
             "post": {
                 "consumes": [
-                    "application/json",
-                    "text/xml"
+                    "application/json"
                 ],
                 "produces": [
-                    "application/json",
-                    "application/xml"
+                    "application/json"
                 ],
                 "tags": [
                     "auth"
@@ -129,16 +125,14 @@
                 }
             }
         },
-        "/users/login": {
+        "/user/login": {
             "post": {
                 "description": "Password should contain:\n- minimum of one small case letter\n- minimum of one upper case letter\n- minimum of one digit\n- minimum of one special character\n- minimum 8 characters length\nResponse contain pair JWT tokens, use /tokens/refresh for updating them",
                 "consumes": [
-                    "application/json",
-                    "text/xml"
+                    "application/json"
                 ],
                 "produces": [
-                    "application/json",
-                    "application/xml"
+                    "application/json"
                 ],
                 "tags": [
                     "auth"
@@ -189,15 +183,13 @@
                 }
             }
         },
-        "/users/logout": {
+        "/user/logout": {
             "post": {
                 "consumes": [
-                    "application/json",
-                    "text/xml"
+                    "application/json"
                 ],
                 "produces": [
-                    "application/json",
-                    "application/xml"
+                    "application/json"
                 ],
                 "tags": [
                     "auth"
@@ -234,16 +226,14 @@
                 }
             }
         },
-        "/users/registration": {
+        "/user/register": {
             "post": {
                 "description": "Password should contain:\n- minimum of one small case letter\n- minimum of one upper case letter\n- minimum of one digit\n- minimum of one special character\n- minimum 8 characters length",
                 "consumes": [
-                    "application/json",
-                    "text/xml"
+                    "application/json"
                 ],
                 "produces": [
-                    "application/json",
-                    "application/xml"
+                    "application/json"
                 ],
                 "tags": [
                     "auth"
