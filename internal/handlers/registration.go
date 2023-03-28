@@ -7,12 +7,13 @@ import (
 
 	"github.com/aerosystems/nix-junior-chat-back/internal/helpers"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
+	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type RegistrationRequestBody struct {
-	Email    string `json:"email" xml:"email" example:"example@gmail.com"`
-	Password string `json:"password" xml:"password" example:"P@ssw0rd"`
+	Email    string `json:"email" example:"example@gmail.com"`
+	Password string `json:"password" example:"P@ssw0rd"`
 }
 
 // Registration godoc
@@ -25,14 +26,12 @@ type RegistrationRequestBody struct {
 // @Description - minimum 8 characters length
 // @Tags auth
 // @Accept  json
-// @Accept  xml
 // @Produce application/json
-// @Produce application/xml
 // @Param registration body handlers.RegistrationRequestBody true "raw request body"
 // @Success 200 {object} Response
 // @Failure 400 {object} Response
 // @Failure 404 {object} Response
-// @Router /users/registration [post]
+// @Router /user/register [post]
 func (h *BaseHandler) Registration(c echo.Context) error {
 	var requestPayload RegistrationRequestBody
 
@@ -83,7 +82,7 @@ func (h *BaseHandler) Registration(c echo.Context) error {
 				}
 			} else {
 				// extend expiration code and return previous active code
-				// TODO you should send Code by email/sms etc. & handle error sending
+				//TODO send confirmation code via email or sms provider & handle error sending
 				h.codeRepo.ExtendExpiration(code)
 				_ = code.Code
 			}
@@ -121,6 +120,8 @@ func (h *BaseHandler) Registration(c echo.Context) error {
 	if err != nil {
 		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
 	}
+
+	//TODO send confirmation code via email or sms provider & handle error sending
 
 	payload = Response{
 		Error:   false,

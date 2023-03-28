@@ -7,24 +7,23 @@ import (
 	"time"
 
 	"github.com/aerosystems/nix-junior-chat-back/internal/helpers"
+	"github.com/labstack/echo/v4"
 )
 
 type CodeRequestBody struct {
-	Code int `json:"code" xml:"code" example:"123456"`
+	Code int `json:"code" example:"123456"`
 }
 
 // Confirmation godoc
 // @Summary confirm registration/reset password with 6-digit code from email/sms
 // @Tags auth
 // @Accept  json
-// @Accept  xml
 // @Produce application/json
-// @Produce application/xml
 // @Param code body handlers.CodeRequestBody true "raw request body"
 // @Success 200 {object} Response
 // @Failure 400 {object} Response
 // @Failure 404 {object} Response
-// @Router /users/confirmation [post]
+// @Router /user/confirm [post]
 func (h *BaseHandler) Confirmation(c echo.Context) error {
 	var requestPayload CodeRequestBody
 

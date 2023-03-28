@@ -7,25 +7,24 @@ import (
 	"net/http"
 
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
+	"github.com/labstack/echo/v4"
 )
 
 type RefreshTokenRequestBody struct {
-	RefreshToken string `json:"refresh_token" xml:"refresh_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"`
+	RefreshToken string `json:"refresh_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"`
 }
 
 // RefreshToken godoc
 // @Summary refresh pair JWT tokens
 // @Tags auth
 // @Accept  json
-// @Accept  xml
 // @Produce application/json
-// @Produce application/xml
 // @Param login body handlers.RefreshTokenRequestBody true "raw request body, should contain Refresh Token"
 // @Param Authorization header string true "should contain Access Token, with the Bearer started"
 // @Success 200 {object} Response{data=TokensResponseBody}
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response
-// @Router /tokens/refresh [post]
+// @Router /token/refresh [post]
 func (h *BaseHandler) RefreshToken(c echo.Context) error {
 	// receive AccessToken Claims from context middleware
 	accessTokenClaims, ok := c.Get("user").(*models.AccessTokenClaims)

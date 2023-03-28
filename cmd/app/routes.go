@@ -12,13 +12,13 @@ func (app *Config) NewRouter() *echo.Echo {
 
 	e.GET("/docs/*", echoSwagger.WrapHandler)
 
-	e.POST("/v1/users/registration", app.BaseHandler.Registration)
-	e.POST("/v1/users/confirmation", app.BaseHandler.Confirmation)
+	e.POST("/v1/user/register", app.BaseHandler.Registration)
+	e.POST("/v1/user/confirm", app.BaseHandler.Confirmation)
 
-	e.POST("/v1/users/login", app.BaseHandler.Login)
-	e.POST("/v1/users/logout", app.BaseHandler.Logout, app.AuthorizationMiddleware())
+	e.POST("/v1/user/login", app.BaseHandler.Login)
+	e.POST("/v1/user/logout", app.BaseHandler.Logout, app.AuthorizationMiddleware())
 
-	e.POST("/v1/tokens/refresh", app.BaseHandler.RefreshToken, app.AuthorizationMiddleware())
+	e.POST("/v1/token/refresh", app.BaseHandler.RefreshToken, app.AuthorizationMiddleware())
 
 	return e
 }

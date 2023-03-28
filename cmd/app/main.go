@@ -19,9 +19,9 @@ type Config struct {
 	TokensRepo        models.TokensRepository
 }
 
-// @title NIX Trainee 5-6-7-8 tasks
+// @title NIX Junior: Chat App
 // @version 1.0
-// @description Simple REST API for CRUD operations with Comments & Posts entities.
+// @description Backend App for simple social Live Chat
 
 // @contact.name Artem Kostenko
 // @contact.url https://github.com/aerosystems
@@ -33,6 +33,7 @@ type Config struct {
 // @BasePath /v1
 func main() {
 	clientGORM := mygorm.NewClient()
+	clientGORM.AutoMigrate(models.User{}, models.Code{})
 	clientREDIS := myredis.NewClient()
 	userRepo := storage.NewUserRepo(clientGORM, clientREDIS)
 	codeRepo := storage.NewCodeRepo(clientGORM)

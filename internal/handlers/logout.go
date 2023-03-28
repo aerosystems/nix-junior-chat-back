@@ -13,14 +13,12 @@ import (
 // @Summary logout user
 // @Tags auth
 // @Accept  json
-// @Accept  xml
 // @Produce application/json
-// @Produce application/xml
 // @Param Authorization header string true "should contain Access Token, with the Bearer started"
 // @Success 202 {object} Response
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response
-// @Router /users/logout [post]
+// @Router /user/logout [post]
 func (h *BaseHandler) Logout(c echo.Context) error {
 	// receive AccessToken Claims from context middleware
 	accessTokenClaims, ok := c.Get("user").(*models.AccessTokenClaims)
