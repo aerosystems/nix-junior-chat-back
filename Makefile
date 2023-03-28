@@ -10,6 +10,13 @@ down:
 	docker-compose -f ./docker-compose.dev.yml --env-file ./.env.dev down
 	@echo "Docker stopped!"
 
+## rebuild: rebuilding all containers without cache
+rebuild:
+	@echo "Rebuilding docker images..."
+	docker-compose -f ./docker-compose.dev.yml --env-file ./.env.dev down
+	docker-compose -f ./docker-compose.dev.yml --env-file ./.env.dev build --no-cache
+	@echo "Docker images rebuilt!"
+
 ## chat: stops chat-service, removes docker image, builds service, and starts it
 chat: build
 	@echo "Building chat-service docker image..."
@@ -34,12 +41,6 @@ doc:
 	@echo "Stopping generating Swagger Docs..."
 	swag init -g ./cmd/app/* --output ./docs
 	@echo "Swagger Docs prepared, look at /docs"
-
-## init: run this command once for prepare MySQL database
-init:
-	@echo "Creating Database schema..."
-	docker exec -i mysql mysql -uroot -proot < migrations/init-001.sql
-	docker-compose -f ./docker-compose.dev.yml --env-file ./.env.dev restart chat-service
 
 ## help: displays help
 help: Makefile

@@ -22,15 +22,13 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/tokens/refresh": {
+        "/token/refresh": {
             "post": {
                 "consumes": [
-                    "application/json",
-                    "text/xml"
+                    "application/json"
                 ],
                 "produces": [
-                    "application/json",
-                    "application/xml"
+                    "application/json"
                 ],
                 "tags": [
                     "auth"
@@ -88,15 +86,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/confirmation": {
+        "/user/confirm": {
             "post": {
                 "consumes": [
-                    "application/json",
-                    "text/xml"
+                    "application/json"
                 ],
                 "produces": [
-                    "application/json",
-                    "application/xml"
+                    "application/json"
                 ],
                 "tags": [
                     "auth"
@@ -135,16 +131,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/login": {
+        "/user/login": {
             "post": {
                 "description": "Password should contain:\n- minimum of one small case letter\n- minimum of one upper case letter\n- minimum of one digit\n- minimum of one special character\n- minimum 8 characters length\nResponse contain pair JWT tokens, use /tokens/refresh for updating them",
                 "consumes": [
-                    "application/json",
-                    "text/xml"
+                    "application/json"
                 ],
                 "produces": [
-                    "application/json",
-                    "application/xml"
+                    "application/json"
                 ],
                 "tags": [
                     "auth"
@@ -195,15 +189,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/logout": {
+        "/user/logout": {
             "post": {
                 "consumes": [
-                    "application/json",
-                    "text/xml"
+                    "application/json"
                 ],
                 "produces": [
-                    "application/json",
-                    "application/xml"
+                    "application/json"
                 ],
                 "tags": [
                     "auth"
@@ -240,16 +232,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/registration": {
+        "/user/register": {
             "post": {
                 "description": "Password should contain:\n- minimum of one small case letter\n- minimum of one upper case letter\n- minimum of one digit\n- minimum of one special character\n- minimum 8 characters length",
                 "consumes": [
-                    "application/json",
-                    "text/xml"
+                    "application/json"
                 ],
                 "produces": [
-                    "application/json",
-                    "application/xml"
+                    "application/json"
                 ],
                 "tags": [
                     "auth"
@@ -368,8 +358,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/v1",
 	Schemes:          []string{},
-	Title:            "NIX Trainee 5-6-7-8 tasks",
-	Description:      "Simple REST API for CRUD operations with Comments & Posts entities.",
+	Title:            "NIX Junior: Chat App",
+	Description:      "Backend App for simple social Live Chat",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }
