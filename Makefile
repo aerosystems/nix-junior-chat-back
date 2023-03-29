@@ -15,6 +15,7 @@ rebuild:
 	@echo "Rebuilding docker images..."
 	docker-compose -f ./docker-compose.dev.yml --env-file ./.env.dev down
 	docker-compose -f ./docker-compose.dev.yml --env-file ./.env.dev build --no-cache
+	docker-compose -f ./docker-compose.dev.yml --env-file ./.env.dev up -d
 	@echo "Docker images rebuilt!"
 
 ## chat: stops chat-service, removes docker image, builds service, and starts it
