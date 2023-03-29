@@ -11,7 +11,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-const webPort = 80
+const webPort = 8080
 
 type Config struct {
 	BaseHandler       *handlers.BaseHandler
@@ -29,7 +29,7 @@ type Config struct {
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host chat.nix:80
+// @host localhost:80
 // @BasePath /v1
 func main() {
 	clientGORM := mygorm.NewClient()

@@ -355,7 +355,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "chat.nix:443",
+	Host:             "localhost:80",
 	BasePath:         "/v1",
 	Schemes:          []string{},
 	Title:            "NIX Junior: Chat App",

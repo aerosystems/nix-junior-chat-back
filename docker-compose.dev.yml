@@ -1,29 +1,13 @@
-version: '3'
-
 services:
-  nginx-proxy:
-    container_name: "nginx-proxy"
+  # Nginx high performance web server
+  nginx:
+    container_name: nginx
     restart: unless-stopped
     depends_on:
       - chat-service
-    image: jwilder/nginx-proxy
+    build: ./nginx
     ports:
       - "80:80"
-      - "443:443"
-    volumes:
-      - "/etc/nginx/vhost.d"
-      - "/usr/share/nginx/html"
-      - "/var/run/docker.sock:/tmp/docker.sock:ro"
-      - "/etc/nginx/certs"
-
-  letsencrypt-nginx-proxy-companion:
-    container_name: "letsencrypt-nginx-proxy-companion"
-    restart: unless-stopped
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    volumes_from:
-      - "nginx-proxy"
 
   # Golang binary chat-service
   chat-service:
@@ -48,8 +32,6 @@ services:
       ACCESS_EXP_MINUTES: ${ACCESS_EXP_MINUTES}
       REFRESH_SECRET: ${REFRESH_SECRET}
       REFRESH_EXP_MINUTES: ${REFRESH_EXP_MINUTES}
-      VIRTUAL_HOST: ${VIRTUAL_HOST}
-      LETSENCRYPT_HOST: ${LETSENCRYPT_HOST}
       
   # MySQL
   mysql:
@@ -64,19 +46,19 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     expose:
-      - '3306'
+      - 3306
     volumes:
-      - './db/mysql/data:/var/lib/mysql'
-      - './db/mysql/my.cnf:/etc/mysql/conf.d/my.cnf'
-      - './db/mysql/sql:/docker-entrypoint-initdb.d'
+      - "./db/mysql/data:/var/lib/mysql"
+      - "./db/mysql/my.cnf:/etc/mysql/conf.d/my.cnf"
+      - "./db/mysql/sql:/docker-entrypoint-initdb.d"
 
   # Redis
   redis:
    container_name: redis
-   image: 'redis:6.2-alpine'
+   image: "redis:6.2-alpine"
    restart: unless-stopped
    expose:
-     - "6379"
+     - 6379
    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
    volumes: 
-      - './db/redis:/data'
+      - "./db/redis:/data"
