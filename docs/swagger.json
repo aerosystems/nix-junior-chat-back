@@ -13,7 +13,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "chat.nix:443",
     "basePath": "/v1",
     "paths": {
         "/token/refresh": {
