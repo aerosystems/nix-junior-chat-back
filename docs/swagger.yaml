@@ -1,18 +1,12 @@
 basePath: /v1
 definitions:
-  handlers.CodeRequestBody:
-    properties:
-      code:
-        example: 123456
-        type: integer
-    type: object
   handlers.LoginRequestBody:
     properties:
-      email:
-        example: example@gmail.com
-        type: string
       password:
         example: P@ssw0rd
+        type: string
+      username:
+        example: username
         type: string
     type: object
   handlers.RefreshTokenRequestBody:
@@ -23,11 +17,11 @@ definitions:
     type: object
   handlers.RegistrationRequestBody:
     properties:
-      email:
-        example: example@gmail.com
-        type: string
       password:
         example: P@ssw0rd
+        type: string
+      username:
+        example: username
         type: string
     type: object
   handlers.Response:
@@ -98,46 +92,22 @@ paths:
       summary: refresh pair JWT tokens
       tags:
       - auth
-  /user/confirm:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: raw request body
-        in: body
-        name: code
-        required: true
-        schema:
-          $ref: '#/definitions/handlers.CodeRequestBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/handlers.Response'
-      summary: confirm registration/reset password with 6-digit code from email/sms
-      tags:
-      - auth
   /user/login:
     post:
       consumes:
       - application/json
       description: |-
+        Username should contain:
+        - lower, upper case latin letters and digits
+        - minimum 8 characters length
+        - maximum 40 characters length
         Password should contain:
         - minimum of one small case letter
         - minimum of one upper case letter
         - minimum of one digit
         - minimum of one special character
         - minimum 8 characters length
+        - maximum 40 characters length
         Response contain pair JWT tokens, use /tokens/refresh for updating them
       parameters:
       - description: raw request body
@@ -202,12 +172,18 @@ paths:
       consumes:
       - application/json
       description: |-
+        Username should contain:
+        - lower, upper case latin letters and digits
+        - minimum 8 characters length
+        - maximum 40 characters length
+        <br>
         Password should contain:
         - minimum of one small case letter
         - minimum of one upper case letter
         - minimum of one digit
         - minimum of one special character
         - minimum 8 characters length
+        - maximum 40 characters length
       parameters:
       - description: raw request body
         in: body

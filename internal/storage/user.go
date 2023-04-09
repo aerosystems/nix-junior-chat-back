@@ -27,27 +27,18 @@ func (r *UserRepo) FindAll() (*[]models.User, error) {
 	return &users, nil
 }
 
-func (r *UserRepo) FindByID(ID int) (*models.User, error) {
+func (r *UserRepo) FindByID(id int) (*models.User, error) {
 	var user models.User
-	result := r.db.Find(&user, ID)
+	result := r.db.Find(&user, id)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 	return &user, nil
 }
 
-func (r *UserRepo) FindByEmail(Email string) (*models.User, error) {
+func (r *UserRepo) FindByUsername(username string) (*models.User, error) {
 	var user models.User
-	result := r.db.Where("email = ?", Email).First(&user)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return &user, nil
-}
-
-func (r *UserRepo) FindByGoogleID(GoogleID string) (*models.User, error) {
-	var user models.User
-	result := r.db.Where("google_id = ?", GoogleID).First(&user)
+	result := r.db.Where("username = ?", username).First(&user)
 	if result.Error != nil {
 		return nil, result.Error
 	}

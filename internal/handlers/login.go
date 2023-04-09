@@ -7,10 +7,11 @@ import (
 
 	"github.com/aerosystems/nix-junior-chat-back/internal/helpers"
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 type LoginRequestBody struct {
-	Email    string `json:"email" example:"example@gmail.com"`
+	Username string `json:"username" example:"username"`
 	Password string `json:"password" example:"P@ssw0rd"`
 }
 
@@ -21,12 +22,17 @@ type TokensResponseBody struct {
 
 // Login godoc
 // @Summary login user by credentials
+// @Description Username should contain:
+// @Description - lower, upper case latin letters and digits
+// @Description - minimum 8 characters length
+// @Description - maximum 40 characters length
 // @Description Password should contain:
 // @Description - minimum of one small case letter
 // @Description - minimum of one upper case letter
 // @Description - minimum of one digit
 // @Description - minimum of one special character
 // @Description - minimum 8 characters length
+// @Description - maximum 40 characters length
 // @Description Response contain pair JWT tokens, use /tokens/refresh for updating them
 // @Tags auth
 // @Accept  json
@@ -43,32 +49,21 @@ func (h *BaseHandler) Login(c echo.Context) error {
 		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
 	}
 
-	addr, err := helpers.ValidateEmail(requestPayload.Email)
-	if err != nil {
-		err = errors.New("email is not valid")
+	if err := helpers.ValidateUsername(requestPayload.Username); err != nil {
 		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
 	}
-
-	email := helpers.NormalizeEmail(addr)
-
-	// Minimum of one small case letter
-	// Minimum of one upper case letter
-	// Minimum of one digit
-	// Minimum of one special character
-	// Minimum 8 characters length
 
 	if err := helpers.ValidatePassword(requestPayload.Password); err != nil {
 		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
 	}
 
-	// validate against database
-	user, err := h.userRepo.FindByEmail(email)
-	if err != nil {
+	//checking if user is existing
+	user, err := h.userRepo.FindByUsername(requestPayload.Username)
+	if err != nil && err != gorm.ErrRecordNotFound {
 		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
 	}
-
-	if !user.IsActive {
-		err := errors.New("user has did not confirm registration")
+	if user == nil {
+		err := fmt.Errorf("user with username %s does not exist", requestPayload.Username)
 		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
 	}
 
@@ -96,7 +91,7 @@ func (h *BaseHandler) Login(c echo.Context) error {
 
 	payload := Response{
 		Error:   false,
-		Message: fmt.Sprintf("Logged in user %s", requestPayload.Email),
+		Message: fmt.Sprintf("user %s is logged in", requestPayload.Username),
 		Data:    tokens,
 	}
 	return WriteResponse(c, http.StatusAccepted, payload)

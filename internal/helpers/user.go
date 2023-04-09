@@ -2,48 +2,32 @@ package helpers
 
 import (
 	"errors"
-	"net/mail"
-	"os"
 	"regexp"
-	"strings"
 )
 
-func ValidateEmail(data string) (string, error) {
-	email, err := mail.ParseAddress(data)
+func ValidateUsername(username string) error {
+	if len(username) < 4 {
+		return errors.New("username should be of 4 characters long")
+	}
+	if len(username) > 20 {
+		return errors.New("username length should be maximum 20 characters long")
+	}
+	done, err := regexp.MatchString("([a-zA-Z0-9])+", username)
 	if err != nil {
-		return "", err
+		return err
 	}
-
-	return email.Address, nil
-}
-
-func NormalizeEmail(data string) string {
-	addr := strings.ToLower(data)
-
-	arrAddr := strings.Split(addr, "@")
-	username := arrAddr[0]
-	domain := arrAddr[1]
-
-	googleDomains := strings.Split(os.Getenv("GOOGLEMAIL_DOMAINS"), ",")
-
-	//checking Google Mail aliases
-	if Contains(googleDomains, domain) {
-		//removing all dots from username mail
-		username = strings.ReplaceAll(username, ".", "")
-		//removing all characters after +
-		if strings.Contains(username, "+") {
-			res := strings.Split(username, "+")
-			username = res[0]
-		}
-		addr = username + "@gmail.com"
+	if !done {
+		return errors.New("username should contain only lower, upper case latin letters and digits")
 	}
-
-	return addr
+	return nil
 }
 
 func ValidatePassword(password string) error {
 	if len(password) < 8 {
 		return errors.New("password should be of 8 characters long")
+	}
+	if len(password) > 40 {
+		return errors.New("password length should be maximum 40 characters long")
 	}
 	done, err := regexp.MatchString("([a-z])+", password)
 	if err != nil {

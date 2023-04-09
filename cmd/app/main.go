@@ -7,15 +7,12 @@ import (
 	"github.com/aerosystems/nix-junior-chat-back/internal/storage"
 	"github.com/aerosystems/nix-junior-chat-back/pkg/myredis"
 	"github.com/aerosystems/nix-junior-chat-back/pkg/mysql/mygorm"
-
-	"golang.org/x/oauth2"
 )
 
 const webPort = 8080
 
 type Config struct {
 	BaseHandler       *handlers.BaseHandler
-	GoogleOauthConfig *oauth2.Config
 	TokensRepo        models.TokensRepository
 }
 
@@ -33,16 +30,14 @@ type Config struct {
 // @BasePath /v1
 func main() {
 	clientGORM := mygorm.NewClient()
-	clientGORM.AutoMigrate(models.User{}, models.Code{})
+	clientGORM.AutoMigrate(models.User{})
 	clientREDIS := myredis.NewClient()
 	userRepo := storage.NewUserRepo(clientGORM, clientREDIS)
-	codeRepo := storage.NewCodeRepo(clientGORM)
 	tokensRepo := storage.NewTokensRepo(clientREDIS)
 
 	app := Config{
 		BaseHandler: handlers.NewBaseHandler(
 			userRepo,
-			codeRepo,
 			tokensRepo,
 		),
 		TokensRepo: tokensRepo,

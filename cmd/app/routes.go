@@ -13,7 +13,6 @@ func (app *Config) NewRouter() *echo.Echo {
 	e.GET("/docs/*", echoSwagger.WrapHandler)
 
 	e.POST("/v1/user/register", app.BaseHandler.Registration)
-	e.POST("/v1/user/confirm", app.BaseHandler.Confirmation)
 
 	e.POST("/v1/user/login", app.BaseHandler.Login)
 	e.POST("/v1/user/logout", app.BaseHandler.Logout, app.AuthorizationMiddleware())
