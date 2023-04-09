@@ -86,54 +86,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/confirm": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "confirm registration/reset password with 6-digit code from email/sms",
-                "parameters": [
-                    {
-                        "description": "raw request body",
-                        "name": "code",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/handlers.CodeRequestBody"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/user/login": {
             "post": {
-                "description": "Password should contain:\n- minimum of one small case letter\n- minimum of one upper case letter\n- minimum of one digit\n- minimum of one special character\n- minimum 8 characters length\nResponse contain pair JWT tokens, use /tokens/refresh for updating them",
+                "description": "Username should contain:\n- lower, upper case latin letters and digits\n- minimum 8 characters length\n- maximum 40 characters length\nPassword should contain:\n- minimum of one small case letter\n- minimum of one upper case letter\n- minimum of one digit\n- minimum of one special character\n- minimum 8 characters length\n- maximum 40 characters length\nResponse contain pair JWT tokens, use /tokens/refresh for updating them",
                 "consumes": [
                     "application/json"
                 ],
@@ -234,7 +189,7 @@ const docTemplate = `{
         },
         "/user/register": {
             "post": {
-                "description": "Password should contain:\n- minimum of one small case letter\n- minimum of one upper case letter\n- minimum of one digit\n- minimum of one special character\n- minimum 8 characters length",
+                "description": "Username should contain:\n- lower, upper case latin letters and digits\n- minimum 8 characters length\n- maximum 40 characters length\n\u003cbr\u003e\nPassword should contain:\n- minimum of one small case letter\n- minimum of one upper case letter\n- minimum of one digit\n- minimum of one special character\n- minimum 8 characters length\n- maximum 40 characters length",
                 "consumes": [
                     "application/json"
                 ],
@@ -280,25 +235,16 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "handlers.CodeRequestBody": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 123456
-                }
-            }
-        },
         "handlers.LoginRequestBody": {
             "type": "object",
             "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "example@gmail.com"
-                },
                 "password": {
                     "type": "string",
                     "example": "P@ssw0rd"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "username"
                 }
             }
         },
@@ -314,13 +260,13 @@ const docTemplate = `{
         "handlers.RegistrationRequestBody": {
             "type": "object",
             "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "example@gmail.com"
-                },
                 "password": {
                     "type": "string",
                     "example": "P@ssw0rd"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "username"
                 }
             }
         },

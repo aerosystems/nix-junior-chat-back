@@ -1,30 +1,30 @@
 ## up: starts all containers in the background without forcing build
 up:
 	@echo "Starting docker images..."
-	docker-compose -f ./docker-compose.dev.yml --env-file ./.env.dev up -d
+	docker-compose -f ./docker-compose.local.yml --env-file ./.env.local up -d
 	@echo "Docker images started!"
 
 ## down: stop docker compose
 down:
 	@echo "Stopping docker images..."
-	docker-compose -f ./docker-compose.dev.yml --env-file ./.env.dev down
+	docker-compose -f ./docker-compose.local.yml --env-file ./.env.local down
 	@echo "Docker stopped!"
 
 ## rebuild: rebuilding all containers without cache
 rebuild:
 	@echo "Rebuilding docker images..."
-	docker-compose -f ./docker-compose.dev.yml --env-file ./.env.dev down
-	docker-compose -f ./docker-compose.dev.yml --env-file ./.env.dev build --no-cache
-	docker-compose -f ./docker-compose.dev.yml --env-file ./.env.dev up -d
+	docker-compose -f ./docker-compose.local.yml --env-file ./.env.local down
+	docker-compose -f ./docker-compose.local.yml --env-file ./.env.local build --no-cache
+	docker-compose -f ./docker-compose.local.yml --env-file ./.env.local up -d
 	@echo "Docker images rebuilt!"
 
 ## chat: stops chat-service, removes docker image, builds service, and starts it
 chat: build
 	@echo "Building chat-service docker image..."
-	docker-compose -f ./docker-compose.dev.yml --env-file ./.env.dev stop chat-service
-	docker-compose -f ./docker-compose.dev.yml --env-file ./.env.dev rm -f chat-service
-	docker-compose -f ./docker-compose.dev.yml --env-file ./.env.dev up --build -d chat-service
-	docker-compose -f ./docker-compose.dev.yml --env-file ./.env.dev start chat-service
+	docker-compose -f ./docker-compose.local.yml --env-file ./.env.local stop chat-service
+	docker-compose -f ./docker-compose.local.yml --env-file ./.env.local rm -f chat-service
+	docker-compose -f ./docker-compose.local.yml --env-file ./.env.local up --build -d chat-service
+	docker-compose -f ./docker-compose.local.yml --env-file ./.env.local start chat-service
 	@echo "chat-service built and started!"
 
 ## build: builds the chat-service binary as a linux executable

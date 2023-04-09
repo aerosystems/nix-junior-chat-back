@@ -1,23 +1,25 @@
 package models
 
-import "time"
+import (
+	"time"
+	"gorm.io/gorm"
+)
 
 type User struct {
-	ID        int       `json:"id" xml:"id"  gorm:"<-"`
-	Email     string    `json:"email" xml:"email"  gorm:"<-"`
-	Password  string    `json:"-" xml:"_"  gorm:"<-"`
-	Role      string    `json:"role" xml:"role"  gorm:"<-"`
-	CreatedAt time.Time `json:"created_at" xml:"created_at"  gorm:"<-"`
-	UpdatedAt time.Time `json:"updated_at" xml:"updated_at"  gorm:"<-"`
-	IsActive  bool      `json:"is_active" xml:"is_active"  gorm:"<-"`
-	GoogleID  string    `json:"google_id" xml:"google_id"  gorm:"<-"`
+	ID        int            `json:"id" gorm:"primaryKey" example:"1"`
+	Username  string         `json:"username" gorm:"unique" example:"username"`
+	Password  string         `json:"-"`
+	Friends   []*User        `json:"-" gorm:"many2many:user_friends"`
+	Blacklist []*User        `json:"-" gorm:"many2many:user_blacklist"`
+	CreatedAt time.Time      `json:"created_at" example:"2024-01-01T00:00:00Z"`
+	UpdatedAt time.Time      `json:"updated_at" example:"2024-01-01T00:00:00Z"`
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 type UserRepository interface {
 	FindAll() (*[]User, error)
-	FindByID(ID int) (*User, error)
-	FindByEmail(Email string) (*User, error)
-	FindByGoogleID(GoogleID string) (*User, error)
+	FindByID(id int) (*User, error)
+	FindByUsername(username string) (*User, error)
 	Create(user *User) error
 	Update(user *User) error
 	Delete(user *User) error

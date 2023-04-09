@@ -7,7 +7,6 @@ import (
 
 type BaseHandler struct {
 	userRepo   models.UserRepository
-	codeRepo   models.CodeRepository
 	tokensRepo models.TokensRepository
 }
 
@@ -20,12 +19,10 @@ type Response struct {
 
 func NewBaseHandler(
 	userRepo models.UserRepository,
-	codeRepo models.CodeRepository,
 	tokensRepo models.TokensRepository,
 ) *BaseHandler {
 	return &BaseHandler{
 		userRepo:   userRepo,
-		codeRepo:   codeRepo,
 		tokensRepo: tokensRepo,
 	}
 }

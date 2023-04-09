@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -12,18 +11,23 @@ import (
 )
 
 type RegistrationRequestBody struct {
-	Email    string `json:"email" example:"example@gmail.com"`
+	Username string `json:"username" example:"username"`
 	Password string `json:"password" example:"P@ssw0rd"`
 }
 
 // Registration godoc
 // @Summary registration user by credentials
+// @Description Username should contain:
+// @Description - lower, upper case latin letters and digits
+// @Description - minimum 8 characters length
+// @Description - maximum 40 characters length
 // @Description Password should contain:
 // @Description - minimum of one small case letter
 // @Description - minimum of one upper case letter
 // @Description - minimum of one digit
 // @Description - minimum of one special character
 // @Description - minimum 8 characters length
+// @Description - maximum 40 characters length
 // @Tags auth
 // @Accept  json
 // @Produce application/json
@@ -39,62 +43,22 @@ func (h *BaseHandler) Registration(c echo.Context) error {
 		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
 	}
 
-	addr, err := helpers.ValidateEmail(requestPayload.Email)
-	if err != nil {
-		err = errors.New("email is not valid")
+	if err := helpers.ValidateUsername(requestPayload.Username); err != nil {
 		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
 	}
 
-	email := helpers.NormalizeEmail(addr)
-
-	// Minimum of one small case letter
-	// Minimum of one upper case letter
-	// Minimum of one digit
-	// Minimum of one special character
-	// Minimum 8 characters length
-	err = helpers.ValidatePassword(requestPayload.Password)
+	err := helpers.ValidatePassword(requestPayload.Password)
 	if err != nil {
 		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
 	}
 
 	var payload Response
 
-	//checking if email is existing
-	user, _ := h.userRepo.FindByEmail(email)
+	//checking if username is existing
+	user, _ := h.userRepo.FindByUsername(requestPayload.Username)
 	if user != nil {
-		if user.IsActive {
-			err = errors.New("email already exists")
-			return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
-		} else {
-			// updating password for inactive user
-			err := h.userRepo.ResetPassword(user, requestPayload.Password)
-			if err != nil {
-				return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
-			}
-
-			code, _ := h.codeRepo.GetLastIsActiveCode(user.ID, "registration")
-
-			if code == nil {
-				// generating confirmation code
-				_, err = h.codeRepo.NewCode(user.ID, "registration", "")
-				if err != nil {
-					return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
-				}
-			} else {
-				// extend expiration code and return previous active code
-				//TODO send confirmation code via email or sms provider & handle error sending
-				h.codeRepo.ExtendExpiration(code)
-				_ = code.Code
-			}
-
-			payload := Response{
-				Error:   false,
-				Message: fmt.Sprintf("Updated user with Id: %d", user.ID),
-				Data:    nil,
-			}
-
-			return WriteResponse(c, http.StatusAccepted, payload)
-		}
+		err = fmt.Errorf("user with username %s already exists", requestPayload.Username)
+		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
 	}
 
 	// hashing password
@@ -103,11 +67,10 @@ func (h *BaseHandler) Registration(c echo.Context) error {
 		return err
 	}
 
-	// creating new inactive user
+	// creating new user
 	newUser := models.User{
-		Email:    email,
+		Username: requestPayload.Username,
 		Password: string(hashedPassword),
-		Role:     "user",
 	}
 	err = h.userRepo.Create(&newUser)
 
@@ -115,17 +78,11 @@ func (h *BaseHandler) Registration(c echo.Context) error {
 		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
 	}
 
-	// generating confirmation code
-	code, err := h.codeRepo.NewCode(newUser.ID, "registration", "")
-	if err != nil {
-		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
-	}
-
-	//TODO send confirmation code via email or sms provider & handle error sending
+	// TODO makemethods for cornirm user account
 
 	payload = Response{
 		Error:   false,
-		Message: fmt.Sprintf("Registered user with Id: %d. Confirmation code: %d", newUser.ID, code.Code),
+		Message: fmt.Sprintf("user with username: %s successfully created", requestPayload.Username),
 		Data:    nil,
 	}
 
