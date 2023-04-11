@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/aerosystems/nix-junior-chat-back/internal/handlers"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
 	"github.com/aerosystems/nix-junior-chat-back/internal/storage"
@@ -12,8 +13,9 @@ import (
 const webPort = 8080
 
 type Config struct {
-	BaseHandler       *handlers.BaseHandler
-	TokensRepo        models.TokensRepository
+	BaseHandler *handlers.BaseHandler
+	UserRepo    models.UserRepository
+	TokensRepo  models.TokensRepository
 }
 
 // @title NIX Junior: Chat App
@@ -40,6 +42,7 @@ func main() {
 			userRepo,
 			tokensRepo,
 		),
+		UserRepo:   userRepo,
 		TokensRepo: tokensRepo,
 	}
 

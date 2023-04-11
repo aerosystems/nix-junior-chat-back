@@ -14,14 +14,14 @@ func (app *Config) NewRouter() *echo.Echo {
 
 	e.POST("/v1/user/register", app.BaseHandler.Registration)
 
-	e.PUT("/v1/user/update-password", app.BaseHandler.UpdatePassword, app.AuthorizationMiddleware())
-	e.PUT("/v1/user/update-username", app.BaseHandler.UpdateUsername, app.AuthorizationMiddleware())
-	e.PUT("/v1/user/update-image", app.BaseHandler.UpdateImage, app.AuthorizationMiddleware())
+	e.PUT("/v1/user/update-password", app.BaseHandler.UpdatePassword, app.AuthUserMiddleware())
+	e.PUT("/v1/user/update-username", app.BaseHandler.UpdateUsername, app.AuthUserMiddleware())
+	e.PUT("/v1/user/update-image", app.BaseHandler.UpdateImage, app.AuthUserMiddleware())
 
 	e.POST("/v1/user/login", app.BaseHandler.Login)
-	e.POST("/v1/user/logout", app.BaseHandler.Logout, app.AuthorizationMiddleware())
+	e.POST("/v1/user/logout", app.BaseHandler.Logout, app.AuthTokenMiddleware())
 
-	e.POST("/v1/token/refresh", app.BaseHandler.RefreshToken, app.AuthorizationMiddleware())
+	e.POST("/v1/token/refresh", app.BaseHandler.RefreshToken, app.AuthTokenMiddleware())
 
 	return e
 }
