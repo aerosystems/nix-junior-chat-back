@@ -11,9 +11,9 @@ type User struct {
 	Password  string         `json:"-"`
 	Friends   []*User        `json:"-" gorm:"many2many:user_friends"`
 	Blacklist []*User        `json:"-" gorm:"many2many:user_blacklist"`
-	CreatedAt time.Time      `json:"created_at" example:"2024-01-01T00:00:00Z"`
-	UpdatedAt time.Time      `json:"updated_at" example:"2024-01-01T00:00:00Z"`
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	CreatedAt time.Time      `json:"-" example:"2024-01-01T00:00:00Z"`
+	UpdatedAt time.Time      `json:"-" example:"2024-01-01T00:00:00Z"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 type UserRepository interface {

@@ -14,6 +14,10 @@ func (app *Config) NewRouter() *echo.Echo {
 
 	e.POST("/v1/user/register", app.BaseHandler.Registration)
 
+	e.PUT("/v1/user/update-password", app.BaseHandler.UpdatePassword, app.AuthorizationMiddleware())
+	e.PUT("/v1/user/update-username", app.BaseHandler.UpdateUsername, app.AuthorizationMiddleware())
+	e.PUT("/v1/user/update-image", app.BaseHandler.UpdateImage, app.AuthorizationMiddleware())
+
 	e.POST("/v1/user/login", app.BaseHandler.Login)
 	e.POST("/v1/user/logout", app.BaseHandler.Logout, app.AuthorizationMiddleware())
 
