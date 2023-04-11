@@ -3,8 +3,9 @@ package handlers
 import (
 	"errors"
 	"fmt"
-	"github.com/labstack/echo/v4"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
 
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
 )
@@ -18,7 +19,7 @@ import (
 // @Success 202 {object} Response
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response
-// @Router /user/logout [post]
+// @Router /v1/user/logout [post]
 func (h *BaseHandler) Logout(c echo.Context) error {
 	// receive AccessToken Claims from context middleware
 	accessTokenClaims, ok := c.Get("user").(*models.AccessTokenClaims)

@@ -35,7 +35,7 @@ type RegistrationRequestBody struct {
 // @Success 200 {object} Response
 // @Failure 400 {object} Response
 // @Failure 404 {object} Response
-// @Router /user/register [post]
+// @Router /v1/user/register [post]
 func (h *BaseHandler) Registration(c echo.Context) error {
 	var requestPayload RegistrationRequestBody
 

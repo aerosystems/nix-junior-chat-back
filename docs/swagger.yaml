@@ -1,4 +1,4 @@
-basePath: /v1
+basePath: /
 definitions:
   handlers.LoginRequestBody:
     properties:
@@ -41,6 +41,21 @@ definitions:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
         type: string
     type: object
+  handlers.UpdatePasswordRequestBody:
+    properties:
+      new_password:
+        example: NewP@ssw0rd
+        type: string
+      old_password:
+        example: OldP@ssw0rd
+        type: string
+    type: object
+  handlers.UpdateUsernameRequestBody:
+    properties:
+      username:
+        example: username
+        type: string
+    type: object
 host: localhost:80
 info:
   contact:
@@ -53,7 +68,7 @@ info:
   title: 'NIX Junior: Chat App'
   version: "1.0"
 paths:
-  /token/refresh:
+  /v1/token/refresh:
     post:
       consumes:
       - application/json
@@ -92,7 +107,7 @@ paths:
       summary: refresh pair JWT tokens
       tags:
       - auth
-  /user/login:
+  /v1/user/login:
     post:
       consumes:
       - application/json
@@ -139,7 +154,7 @@ paths:
       summary: login user by credentials
       tags:
       - auth
-  /user/logout:
+  /v1/user/logout:
     post:
       consumes:
       - application/json
@@ -167,7 +182,7 @@ paths:
       summary: logout user
       tags:
       - auth
-  /user/register:
+  /v1/user/register:
     post:
       consumes:
       - application/json
@@ -176,7 +191,6 @@ paths:
         - lower, upper case latin letters and digits
         - minimum 8 characters length
         - maximum 40 characters length
-        <br>
         Password should contain:
         - minimum of one small case letter
         - minimum of one upper case letter
@@ -209,4 +223,83 @@ paths:
       summary: registration user by credentials
       tags:
       - auth
+  /v1/user/update-password:
+    put:
+      consumes:
+      - application/json
+      description: |-
+        OldPassword/NewPassword should contain:
+        - minimum of one small case letter
+        - minimum of one upper case letter
+        - minimum of one digit
+        - minimum of one special character
+        - minimum 8 characters length
+        - maximum 40 characters length
+      parameters:
+      - description: raw request body
+        in: body
+        name: password
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.UpdatePasswordRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: update password
+      tags:
+      - user
+  /v1/user/update-username:
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Username should contain:
+        - lower, upper case latin letters and digits
+        - minimum 8 characters length
+        - maximum 40 characters length
+      parameters:
+      - description: raw request body
+        in: body
+        name: username
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.UpdateUsernameRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: update username
+      tags:
+      - user
 swagger: "2.0"

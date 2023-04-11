@@ -24,7 +24,7 @@ type RefreshTokenRequestBody struct {
 // @Success 200 {object} Response{data=TokensResponseBody}
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response
-// @Router /token/refresh [post]
+// @Router /v1/token/refresh [post]
 func (h *BaseHandler) RefreshToken(c echo.Context) error {
 	// receive AccessToken Claims from context middleware
 	accessTokenClaims, ok := c.Get("user").(*models.AccessTokenClaims)

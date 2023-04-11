@@ -41,7 +41,7 @@ type TokensResponseBody struct {
 // @Success 200 {object} Response{data=TokensResponseBody}
 // @Failure 400 {object} Response
 // @Failure 404 {object} Response
-// @Router /user/login [post]
+// @Router /v1/user/login [post]
 func (h *BaseHandler) Login(c echo.Context) error {
 	var requestPayload LoginRequestBody
 

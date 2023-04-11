@@ -29,7 +29,7 @@ type Config struct {
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @host localhost:80
-// @BasePath /v1
+// @BasePath /
 func main() {
 	clientGORM := mygorm.NewClient()
 	clientGORM.AutoMigrate(models.User{})
