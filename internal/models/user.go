@@ -1,8 +1,8 @@
 package models
 
 import (
-	"time"
 	"gorm.io/gorm"
+	"time"
 )
 
 type User struct {
@@ -20,6 +20,7 @@ type UserRepository interface {
 	FindAll() (*[]User, error)
 	FindByID(id int) (*User, error)
 	FindByUsername(username string) (*User, error)
+	FindArrayByPartUsername(username string, order string, limit int) (*[]User, error)
 	Create(user *User) error
 	Update(user *User) error
 	Delete(user *User) error

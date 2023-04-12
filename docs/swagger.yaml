@@ -58,6 +58,15 @@ definitions:
         example: username
         type: string
     type: object
+  models.User:
+    properties:
+      id:
+        example: 1
+        type: integer
+      username:
+        example: username
+        type: string
+    type: object
 host: localhost:80
 info:
   contact:
@@ -70,6 +79,64 @@ info:
   title: 'NIX Junior: Chat App'
   version: "1.0"
 paths:
+  /v1/search:
+    get:
+      consumes:
+      - application/json
+      description: Search users by username with autocomplete
+      parameters:
+      - description: query string for search by username, minimum 3 characters, maximum
+          40 characters
+        in: query
+        name: q
+        required: true
+        type: string
+      - description: 'type of search, default: ''user'', available: ''user'', ''friend'',
+          ''blacklist'''
+        in: query
+        name: type
+        type: string
+      - description: 'order of search, default: ''asc'', available: ''asc'', ''desc'''
+        in: query
+        name: order
+        type: string
+      - description: 'limit of search, default: ''10'', available: ''1-1000'''
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.User'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: search users
+      tags:
+      - search
   /v1/token/refresh:
     post:
       consumes:

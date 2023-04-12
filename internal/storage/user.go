@@ -45,6 +45,12 @@ func (r *UserRepo) FindByUsername(username string) (*models.User, error) {
 	return &user, nil
 }
 
+func (r *UserRepo) FindArrayByPartUsername(username string, order string, limit int) (*[]models.User, error) {
+	var users []models.User
+	r.db.Where("username LIKE ?", username+"%").Order("username " + order).Limit(limit).Find(&users)
+	return &users, nil
+}
+
 func (r *UserRepo) Create(user *models.User) error {
 	result := r.db.Create(&user)
 	if result.Error != nil {
