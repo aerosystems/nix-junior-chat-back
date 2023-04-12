@@ -82,13 +82,19 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/handlers.Response"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
                     }
                 }
             }
         },
         "/v1/user/login": {
             "post": {
-                "description": "Username should contain:\n- lower, upper case latin letters and digits\n- minimum 8 characters length\n- maximum 40 characters length\nPassword should contain:\n- minimum of one small case letter\n- minimum of one upper case letter\n- minimum of one digit\n- minimum of one special character\n- minimum 8 characters length\n- maximum 40 characters length\nResponse contain pair JWT tokens, use /tokens/refresh for updating them",
+                "description": "Username should contain:\n- lower, upper case latin letters and digits\n- minimum 8 characters length\n- maximum 40 characters length\nPassword should contain:\n- minimum of one small case letter\n- minimum of one upper case letter\n- minimum of one digit\n- minimum of one special character\n- minimum 8 characters length\n- maximum 40 characters length\nResponse contain pair JWT tokens, use /v1/tokens/refresh for updating them",
                 "consumes": [
                     "application/json"
                 ],
@@ -140,6 +146,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/handlers.Response"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
                     }
                 }
             }
@@ -166,8 +178,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "202": {
-                        "description": "Accepted",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/handlers.Response"
                         }
@@ -180,6 +192,12 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/handlers.Response"
                         }
@@ -226,6 +244,12 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/handlers.Response"
                         }
@@ -379,10 +403,12 @@ const docTemplate = `{
             "properties": {
                 "data": {},
                 "error": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "example": false
                 },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "success operation"
                 }
             }
         },

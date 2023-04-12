@@ -25,7 +25,7 @@ func (app *Config) AuthTokenMiddleware() echo.MiddlewareFunc {
 		SigningKey:     []byte(os.Getenv("ACCESS_SECRET")),
 		ParseTokenFunc: app.ParseToken,
 		ErrorHandler: func(c echo.Context, err error) error {
-			return handlers.WriteResponse(c, http.StatusUnauthorized, handlers.NewErrorPayload(err))
+			return handlers.ErrorResponse(c, http.StatusUnauthorized, "invalid token", err)
 		},
 	}
 
@@ -37,7 +37,7 @@ func (app *Config) AuthUserMiddleware() echo.MiddlewareFunc {
 		SigningKey:     []byte(os.Getenv("ACCESS_SECRET")),
 		ParseTokenFunc: app.GetUser,
 		ErrorHandler: func(c echo.Context, err error) error {
-			return handlers.WriteResponse(c, http.StatusUnauthorized, handlers.NewErrorPayload(err))
+			return handlers.ErrorResponse(c, http.StatusUnauthorized, "invalid token", err)
 		},
 	}
 

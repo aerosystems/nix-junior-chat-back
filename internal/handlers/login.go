@@ -33,7 +33,7 @@ type TokensResponseBody struct {
 // @Description - minimum of one special character
 // @Description - minimum 8 characters length
 // @Description - maximum 40 characters length
-// @Description Response contain pair JWT tokens, use /tokens/refresh for updating them
+// @Description Response contain pair JWT tokens, use /v1/tokens/refresh for updating them
 // @Tags auth
 // @Accept  json
 // @Produce application/json
@@ -41,47 +41,48 @@ type TokensResponseBody struct {
 // @Success 200 {object} Response{data=TokensResponseBody}
 // @Failure 400 {object} Response
 // @Failure 404 {object} Response
+// @Failure 500 {object} Response
 // @Router /v1/user/login [post]
 func (h *BaseHandler) Login(c echo.Context) error {
 	var requestPayload LoginRequestBody
 
 	if err := c.Bind(&requestPayload); err != nil {
-		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
+		return ErrorResponse(c, http.StatusBadRequest, "invalid request body", err)
 	}
 
 	if err := helpers.ValidateUsername(requestPayload.Username); err != nil {
-		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
+		return ErrorResponse(c, http.StatusBadRequest, "invalid username", err)
 	}
 
 	if err := helpers.ValidatePassword(requestPayload.Password); err != nil {
-		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
+		return ErrorResponse(c, http.StatusBadRequest, "invalid password", err)
 	}
 
 	//checking if user is existing
 	user, err := h.userRepo.FindByUsername(requestPayload.Username)
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
+		return ErrorResponse(c, http.StatusBadRequest, "error while finding user", err)
 	}
 	if user == nil {
 		err := fmt.Errorf("user with username %s does not exist", requestPayload.Username)
-		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
+		return ErrorResponse(c, http.StatusNotFound, "user not found", err)
 	}
 
 	valid, err := h.userRepo.PasswordMatches(user, requestPayload.Password)
 	if err != nil || !valid {
 		err := errors.New("invalid credentials")
-		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
+		return ErrorResponse(c, http.StatusUnauthorized, err.Error(), err)
 	}
 
 	// create pair JWT tokens
 	ts, err := h.tokensRepo.CreateToken(user.ID)
 	if err != nil {
-		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
+		return ErrorResponse(c, http.StatusInternalServerError, "error creating tokens", err)
 	}
 
 	// add refresh token UUID to cache
 	if err = h.tokensRepo.CreateCacheKey(user.ID, ts); err != nil {
-		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
+		return ErrorResponse(c, http.StatusInternalServerError, "error creating cache tokens", err)
 	}
 
 	tokens := TokensResponseBody{
@@ -89,10 +90,5 @@ func (h *BaseHandler) Login(c echo.Context) error {
 		RefreshToken: ts.RefreshToken,
 	}
 
-	payload := Response{
-		Error:   false,
-		Message: fmt.Sprintf("user %s is logged in", requestPayload.Username),
-		Data:    tokens,
-	}
-	return WriteResponse(c, http.StatusAccepted, payload)
+	return SuccessResponse(c, http.StatusOK, fmt.Sprintf("user %s is logged in", requestPayload.Username), tokens)
 }

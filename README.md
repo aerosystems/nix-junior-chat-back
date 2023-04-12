@@ -11,3 +11,7 @@ About most popular command read here - **_make help_**
 🎲Test or Develop with Postman Collection(just import **postman-collection.json** file)
 
 📌All environment variables(**_.env.dev_** file with passwords & API keys) are intentionally left in the root directory for easy application startup.
+
+ℹ️Variable APP_ENV has two possible values:
+- APP_ENV=dev respons debug info level of error
+- APP_ENV=prod respons just message about error [DEFAULT]

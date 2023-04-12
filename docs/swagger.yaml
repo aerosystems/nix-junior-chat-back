@@ -28,8 +28,10 @@ definitions:
     properties:
       data: {}
       error:
+        example: false
         type: boolean
       message:
+        example: success operation
         type: string
     type: object
   handlers.TokensResponseBody:
@@ -104,6 +106,10 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
       summary: refresh pair JWT tokens
       tags:
       - auth
@@ -123,7 +129,7 @@ paths:
         - minimum of one special character
         - minimum 8 characters length
         - maximum 40 characters length
-        Response contain pair JWT tokens, use /tokens/refresh for updating them
+        Response contain pair JWT tokens, use /v1/tokens/refresh for updating them
       parameters:
       - description: raw request body
         in: body
@@ -151,6 +157,10 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
       summary: login user by credentials
       tags:
       - auth
@@ -167,8 +177,8 @@ paths:
       produces:
       - application/json
       responses:
-        "202":
-          description: Accepted
+        "200":
+          description: OK
           schema:
             $ref: '#/definitions/handlers.Response'
         "400":
@@ -177,6 +187,10 @@ paths:
             $ref: '#/definitions/handlers.Response'
         "401":
           description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.Response'
       summary: logout user
@@ -218,6 +232,10 @@ paths:
             $ref: '#/definitions/handlers.Response'
         "404":
           description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.Response'
       summary: registration user by credentials
