@@ -25,5 +25,7 @@ func (app *Config) NewRouter() *echo.Echo {
 
 	e.GET("/v1/search", app.BaseHandler.Search, app.AuthUserMiddleware())
 
+	e.GET("/ws/chat", app.BaseHandler.Chat, app.AuthUserMiddleware())
+
 	return e
 }

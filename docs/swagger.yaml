@@ -58,6 +58,15 @@ definitions:
         example: username
         type: string
     type: object
+  models.ResponseMessage:
+    properties:
+      content:
+        example: bla-bla-bla
+        type: string
+      recipient_id:
+        example: 1
+        type: integer
+    type: object
   models.User:
     properties:
       id:
@@ -387,4 +396,27 @@ paths:
       summary: update username
       tags:
       - user
+  /ws/chat:
+    get:
+      description: Chat with other users based on WebSocket
+      parameters:
+      - description: should contain Access Token, with the Bearer started
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: body should contain content and recipient_id for sending message
+        in: body
+        name: chat
+        required: true
+        schema:
+          $ref: '#/definitions/models.ResponseMessage'
+      responses:
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: Chat [WebSocket]
+      tags:
+      - chat
 swagger: "2.0"

@@ -449,6 +449,41 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/ws/chat": {
+            "get": {
+                "description": "Chat with other users based on WebSocket",
+                "tags": [
+                    "chat"
+                ],
+                "summary": "Chat [WebSocket]",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "should contain Access Token, with the Bearer started",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "body should contain content and recipient_id for sending message",
+                        "name": "chat",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseMessage"
+                        }
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -533,6 +568,19 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "example": "username"
+                }
+            }
+        },
+        "models.ResponseMessage": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "bla-bla-bla"
+                },
+                "recipient_id": {
+                    "type": "integer",
+                    "example": 1
                 }
             }
         },

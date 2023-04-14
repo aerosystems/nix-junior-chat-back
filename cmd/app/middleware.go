@@ -18,6 +18,8 @@ func (app *Config) AddMiddleware(e *echo.Echo) {
 		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete, http.MethodOptions},
 	}
 	e.Use(middleware.CORSWithConfig(DefaultCORSConfig))
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 }
 
 func (app *Config) AuthTokenMiddleware() echo.MiddlewareFunc {

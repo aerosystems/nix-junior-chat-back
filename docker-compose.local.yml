@@ -24,7 +24,6 @@ services:
       replicas: 1
     environment:
       APP_ENV: ${APP_ENV}
-      CODE_EXP_MINUTES: ${CODE_EXP_MINUTES}
       MYSQL_DSN: ${MYSQL_DSN}
       REDIS_DSN: ${REDIS_DSN}
       REDIS_PASSWORD: ${REDIS_PASSWORD}

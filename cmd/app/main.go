@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/labstack/gommon/log"
 
 	"github.com/aerosystems/nix-junior-chat-back/internal/handlers"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
@@ -48,5 +49,6 @@ func main() {
 
 	e := app.NewRouter()
 	app.AddMiddleware(e)
+	e.Logger.SetLevel(log.INFO)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", webPort)))
 }
