@@ -5,11 +5,6 @@ import (
 	"time"
 )
 
-type ResponseMessage struct {
-	Content     string `json:"content" example:"bla-bla-bla"`
-	RecipientID int    `json:"recipientId" example:"1"`
-}
-
 type Message struct {
 	Type        string `json:"type" example:"message"` // text, error, system
 	Content     string `json:"content" example:"bla-bla-bla"`

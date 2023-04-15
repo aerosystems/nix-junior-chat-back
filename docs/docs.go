@@ -515,7 +515,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ResponseMessage"
+                            "$ref": "#/definitions/handlers.MessageResponseBody"
                         }
                     }
                 ],
@@ -544,10 +544,23 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.MessageResponseBody": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "bla-bla-bla"
+                },
+                "recipientId": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "handlers.RefreshTokenRequestBody": {
             "type": "object",
             "properties": {
-                "refresh_token": {
+                "refreshToken": {
                     "type": "string",
                     "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
                 }
@@ -583,11 +596,11 @@ const docTemplate = `{
         "handlers.TokensResponseBody": {
             "type": "object",
             "properties": {
-                "access_token": {
+                "accessToken": {
                     "type": "string",
                     "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
                 },
-                "refresh_token": {
+                "refreshToken": {
                     "type": "string",
                     "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
                 }
@@ -596,11 +609,11 @@ const docTemplate = `{
         "handlers.UpdatePasswordRequestBody": {
             "type": "object",
             "properties": {
-                "new_password": {
+                "newPassword": {
                     "type": "string",
                     "example": "NewP@ssw0rd"
                 },
-                "old_password": {
+                "oldPassword": {
                     "type": "string",
                     "example": "OldP@ssw0rd"
                 }
@@ -612,19 +625,6 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "example": "username"
-                }
-            }
-        },
-        "models.ResponseMessage": {
-            "type": "object",
-            "properties": {
-                "content": {
-                    "type": "string",
-                    "example": "bla-bla-bla"
-                },
-                "recipient_id": {
-                    "type": "integer",
-                    "example": 1
                 }
             }
         },

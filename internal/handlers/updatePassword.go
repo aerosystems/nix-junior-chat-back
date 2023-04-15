@@ -11,8 +11,8 @@ import (
 )
 
 type UpdatePasswordRequestBody struct {
-	NewPassword string `json:"new_password" example:"NewP@ssw0rd"`
-	OldPassword string `json:"old_password" example:"OldP@ssw0rd"`
+	NewPassword string `json:"newPassword" example:"NewP@ssw0rd"`
+	OldPassword string `json:"oldPassword" example:"OldP@ssw0rd"`
 }
 
 // UpdatePassword godoc

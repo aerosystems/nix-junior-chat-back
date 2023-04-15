@@ -9,6 +9,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type MessageResponseBody struct {
+	Content     string `json:"content" example:"bla-bla-bla"`
+	RecipientID int    `json:"recipientId" example:"1"`
+}
+
 // Storage for clients
 var clients []*models.Client
 
@@ -22,7 +27,7 @@ var upgrader = websocket.Upgrader{
 // @Description Chat with users based on WebSocket
 // @Tags chat
 // @Param Authorization header string true "should contain Access Token, with the Bearer started"
-// @Param chat body models.ResponseMessage true "body should contain content and recipient_id for sending message"
+// @Param chat body MessageResponseBody true "body should contain content and recipient_id for sending message"
 // @Failure 401 {object} Response
 // @Router /ws/chat [get]
 func (h *BaseHandler) Chat(c echo.Context) error {
@@ -61,7 +66,7 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 		}
 
 		for _, client := range clients {
-			var responseMessage models.ResponseMessage
+			var responseMessage MessageResponseBody
 			if err := json.Unmarshal(msg, &responseMessage); err != nil {
 				reply := models.NewErrorMessage("invalid message format", user.ID)
 				client.WS.WriteMessage(websocket.TextMessage, reply.Json())

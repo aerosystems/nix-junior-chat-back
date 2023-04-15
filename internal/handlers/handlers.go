@@ -39,10 +39,9 @@ func SuccessResponse(c echo.Context, statusCode int, message string, data any) e
 	return c.JSON(statusCode, payload)
 }
 
-// SuccessResponse takes a response status code and arbitrary data and writes a json response to the client in depends on Header Accept and APP_ENV environment variable
-// Variable APP_ENV has two possible values:
-// - APP_ENV=dev respons debug info level of error
-// - APP_ENV=prod respons just message about error [DEFAULT]
+// ErrorResponse takes a response status code and arbitrary data and writes a json response to the client in depends on Header Accept and APP_ENV environment variable(has two possible values: dev and prod)
+// - APP_ENV=dev responds debug info level of error
+// - APP_ENV=prod responds just message about error [DEFAULT]
 func ErrorResponse(c echo.Context, statusCode int, message string, err error) error {
 	payload := Response{
 		Error:   true,

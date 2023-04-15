@@ -16,22 +16,22 @@ type TokenDetails struct {
 }
 
 type AccessTokenClaims struct {
-	AccessUUID string `json:"access_uuid"`
-	UserID     int    `json:"user_id"`
+	AccessUUID string `json:"accessUuid"`
+	UserID     int    `json:"userId"`
 	Exp        int    `json:"exp"`
 	jwt.StandardClaims
 }
 
 type RefreshTokenClaims struct {
-	RefreshUUID string `json:"refresh_uuid"`
-	UserID      int    `json:"user_id"`
+	RefreshUUID string `json:"refreshUuid"`
+	UserID      int    `json:"userId"`
 	Exp         int    `json:"exp"`
 	jwt.StandardClaims
 }
 
 type AccessTokenCache struct {
-	UserID      int    `json:"user_id"`
-	RefreshUUID string `json:"refresh_uuid"`
+	UserID      int    `json:"userId"`
+	RefreshUUID string `json:"refreshUuid"`
 }
 
 type TokensRepository interface {
