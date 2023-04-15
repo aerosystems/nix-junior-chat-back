@@ -69,6 +69,14 @@ definitions:
     type: object
   models.User:
     properties:
+      blacklist:
+        items:
+          $ref: '#/definitions/models.User'
+        type: array
+      friends:
+        items:
+          $ref: '#/definitions/models.User'
+        type: array
       id:
         example: 1
         type: integer
@@ -189,6 +197,35 @@ paths:
       summary: refresh pair JWT tokens
       tags:
       - auth
+  /v1/user:
+    get:
+      consumes:
+      - application/json
+      description: Get user data
+      parameters:
+      - description: should contain Access Token, with the Bearer started
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: Get user data
+      tags:
+      - user
   /v1/user/login:
     post:
       consumes:
@@ -398,7 +435,7 @@ paths:
       - user
   /ws/chat:
     get:
-      description: Chat with other users based on WebSocket
+      description: Chat with users based on WebSocket
       parameters:
       - description: should contain Access Token, with the Bearer started
         in: header

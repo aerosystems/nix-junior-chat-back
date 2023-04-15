@@ -9,8 +9,8 @@ type User struct {
 	ID        int            `json:"id" gorm:"primaryKey" example:"1"`
 	Username  string         `json:"username" gorm:"unique" example:"username"`
 	Password  string         `json:"-"`
-	Friends   []*User        `json:"-" gorm:"many2many:user_friends"`
-	Blacklist []*User        `json:"-" gorm:"many2many:user_blacklist"`
+	Friends   []*User        `json:"friends" gorm:"many2many:user_friends"`
+	Blacklist []*User        `json:"blacklist" gorm:"many2many:user_blacklist"`
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`

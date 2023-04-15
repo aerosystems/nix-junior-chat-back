@@ -14,7 +14,7 @@ type RefreshTokenRequestBody struct {
 	RefreshToken string `json:"refresh_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"`
 }
 
-// RefreshToken godoc
+// RefreshTokens godoc
 // @Summary refresh pair JWT tokens
 // @Tags auth
 // @Accept  json
@@ -26,7 +26,7 @@ type RefreshTokenRequestBody struct {
 // @Failure 401 {object} Response
 // @Failure 500 {object} Response
 // @Router /v1/token/refresh [post]
-func (h *BaseHandler) RefreshToken(c echo.Context) error {
+func (h *BaseHandler) RefreshTokens(c echo.Context) error {
 	// receive AccessToken Claims from context middleware
 	accessTokenClaims, ok := c.Get("user").(*models.AccessTokenClaims)
 	if !ok {

@@ -7,15 +7,15 @@ import (
 
 type ResponseMessage struct {
 	Content     string `json:"content" example:"bla-bla-bla"`
-	RecipientID int    `json:"recipient_id" example:"1"`
+	RecipientID int    `json:"recipientId" example:"1"`
 }
 
 type Message struct {
 	Type        string `json:"type" example:"message"` // text, error, system
 	Content     string `json:"content" example:"bla-bla-bla"`
-	SenderID    int    `json:"sender_id" example:"1"`
-	RecipientID int    `json:"recipient_id" example:"2"`
-	CreatedAt   int64  `json:"created_at" example:"1620000000"`
+	SenderID    int    `json:"senderId" example:"1"`
+	RecipientID int    `json:"recipientId" example:"2"`
+	CreatedAt   int64  `json:"createdAt" example:"1620000000"`
 }
 
 func NewTextMessage(content string, senderID int, recipientID int) *Message {
