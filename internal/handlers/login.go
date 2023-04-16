@@ -37,7 +37,7 @@ type TokensResponseBody struct {
 // @Tags auth
 // @Accept  json
 // @Produce application/json
-// @Param login body handlers.LoginRequestBody true "raw request body"
+// @Param login body LoginRequestBody true "raw request body"
 // @Success 200 {object} Response{data=TokensResponseBody}
 // @Failure 400 {object} Response
 // @Failure 404 {object} Response

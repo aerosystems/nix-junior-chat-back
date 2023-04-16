@@ -24,8 +24,12 @@ func (app *Config) NewRouter() *echo.Echo {
 
 	e.POST("/v1/tokens/refresh", app.BaseHandler.RefreshTokens, app.AuthTokenMiddleware())
 
+	//Social relations
 	e.GET("/v1/search", app.BaseHandler.Search, app.AuthUserMiddleware())
+	e.POST("/v1/follow", app.BaseHandler.Follow, app.AuthUserMiddleware())
+	e.POST("/v1/block", app.BaseHandler.Block, app.AuthUserMiddleware())
 
+	//Chat
 	e.GET("/ws/chat", app.BaseHandler.Chat, app.AuthUserMiddleware())
 
 	return e

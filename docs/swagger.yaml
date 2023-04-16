@@ -1,5 +1,17 @@
 basePath: /
 definitions:
+  handlers.BlockRequest:
+    properties:
+      userId:
+        example: 1
+        type: integer
+    type: object
+  handlers.FollowRequest:
+    properties:
+      userId:
+        example: 1
+        type: integer
+    type: object
   handlers.LoginRequestBody:
     properties:
       password:
@@ -69,11 +81,11 @@ definitions:
     type: object
   models.User:
     properties:
-      blacklist:
+      blockedUsers:
         items:
           $ref: '#/definitions/models.User'
         type: array
-      friends:
+      followedUsers:
         items:
           $ref: '#/definitions/models.User'
         type: array
@@ -226,6 +238,82 @@ paths:
       summary: Get user data
       tags:
       - user
+  /v1/user/block:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: should contain Access Token, with the Bearer started
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: raw request body
+        in: body
+        name: follow
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.BlockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: Block user
+      tags:
+      - relationship
+  /v1/user/follow:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: should contain Access Token, with the Bearer started
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: raw request body
+        in: body
+        name: follow
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.FollowRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: Follow user
+      tags:
+      - relationship
   /v1/user/login:
     post:
       consumes:

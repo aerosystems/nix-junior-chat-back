@@ -31,7 +31,7 @@ type RegistrationRequestBody struct {
 // @Tags auth
 // @Accept  json
 // @Produce application/json
-// @Param registration body handlers.RegistrationRequestBody true "raw request body"
+// @Param registration body RegistrationRequestBody true "raw request body"
 // @Success 200 {object} Response
 // @Failure 400 {object} Response
 // @Failure 404 {object} Response

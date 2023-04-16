@@ -6,14 +6,14 @@ import (
 )
 
 type User struct {
-	ID        int            `json:"id" gorm:"primaryKey" example:"1"`
-	Username  string         `json:"username" gorm:"unique" example:"username"`
-	Password  string         `json:"-"`
-	Friends   []*User        `json:"friends" gorm:"many2many:user_friends"`
-	Blacklist []*User        `json:"blacklist" gorm:"many2many:user_blacklist"`
-	CreatedAt time.Time      `json:"-"`
-	UpdatedAt time.Time      `json:"-"`
-	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
+	ID            int            `json:"id" gorm:"primaryKey" example:"1"`
+	Username      string         `json:"username" gorm:"unique" example:"username"`
+	Password      string         `json:"-"`
+	FollowedUsers []*User        `json:"followedUsers" gorm:"many2many:followed_users"`
+	BlockedUsers  []*User        `json:"blockedUsers" gorm:"many2many:blocked_users"`
+	CreatedAt     time.Time      `json:"-"`
+	UpdatedAt     time.Time      `json:"-"`
+	DeletedAt     gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 type UserRepository interface {

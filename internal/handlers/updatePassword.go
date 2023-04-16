@@ -27,7 +27,7 @@ type UpdatePasswordRequestBody struct {
 // @Tags user
 // @Accept  json
 // @Produce application/json
-// @Param password body handlers.UpdatePasswordRequestBody true "raw request body"
+// @Param password body UpdatePasswordRequestBody true "raw request body"
 // @Success 200 {object} Response
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response

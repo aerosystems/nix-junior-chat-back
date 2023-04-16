@@ -23,7 +23,7 @@ type UpdateUsernameRequestBody struct {
 // @Tags user
 // @Accept  json
 // @Produce application/json
-// @Param username body handlers.UpdateUsernameRequestBody true "raw request body"
+// @Param username body UpdateUsernameRequestBody true "raw request body"
 // @Success 200 {object} Response
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response

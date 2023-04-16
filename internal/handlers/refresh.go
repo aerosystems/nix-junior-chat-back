@@ -19,7 +19,7 @@ type RefreshTokenRequestBody struct {
 // @Tags auth
 // @Accept  json
 // @Produce application/json
-// @Param login body handlers.RefreshTokenRequestBody true "raw request body, should contain Refresh Token"
+// @Param login body RefreshTokenRequestBody true "raw request body, should contain Refresh Token"
 // @Param Authorization header string true "should contain Access Token, with the Bearer started"
 // @Success 200 {object} Response{data=TokensResponseBody}
 // @Failure 400 {object} Response
