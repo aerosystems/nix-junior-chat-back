@@ -108,6 +108,82 @@ info:
   title: 'NIX Junior: Chat App'
   version: "1.0"
 paths:
+  /v1/block:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: should contain Access Token, with the Bearer started
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: raw request body
+        in: body
+        name: follow
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.BlockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: Block user
+      tags:
+      - relationship
+  /v1/follow:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: should contain Access Token, with the Bearer started
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: raw request body
+        in: body
+        name: follow
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.FollowRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: Follow user
+      tags:
+      - relationship
   /v1/search:
     get:
       consumes:
@@ -177,11 +253,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/handlers.RefreshTokenRequestBody'
-      - description: should contain Access Token, with the Bearer started
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -238,82 +309,6 @@ paths:
       summary: Get user data
       tags:
       - user
-  /v1/user/block:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: should contain Access Token, with the Bearer started
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: raw request body
-        in: body
-        name: follow
-        required: true
-        schema:
-          $ref: '#/definitions/handlers.BlockRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.Response'
-      summary: Block user
-      tags:
-      - relationship
-  /v1/user/follow:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: should contain Access Token, with the Bearer started
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: raw request body
-        in: body
-        name: follow
-        required: true
-        schema:
-          $ref: '#/definitions/handlers.FollowRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.Response'
-      summary: Follow user
-      tags:
-      - relationship
   /v1/user/login:
     post:
       consumes:

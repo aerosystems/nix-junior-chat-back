@@ -45,12 +45,10 @@ func (r *TokensRepo) CreateCacheKey(userID int, td *models.TokenDetails) error {
 		return err
 	}
 
-	err = r.cache.Set(td.AccessUuid.String(), cacheJSON, at.Sub(now)).Err()
-	if err != nil {
+	if err := r.cache.Set(td.AccessUuid.String(), cacheJSON, at.Sub(now)).Err(); err != nil {
 		return err
 	}
-	err = r.cache.Set(td.RefreshUuid.String(), strconv.Itoa(userID), rt.Sub(now)).Err()
-	if err != nil {
+	if err := r.cache.Set(td.RefreshUuid.String(), strconv.Itoa(userID), rt.Sub(now)).Err(); err != nil {
 		return err
 	}
 	return nil
@@ -95,7 +93,7 @@ func (r *TokensRepo) CreateToken(userid int) (*models.TokenDetails, error) {
 	}
 
 	rtClaims := jwt.MapClaims{}
-	rtClaims["refreshUuid"] = td.RefreshUuid
+	rtClaims["refreshUuid"] = td.RefreshUuid.String()
 	rtClaims["userId"] = userid
 	rtClaims["exp"] = td.RtExpires
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)

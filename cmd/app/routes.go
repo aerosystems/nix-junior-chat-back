@@ -22,7 +22,7 @@ func (app *Config) NewRouter() *echo.Echo {
 	e.PUT("/v1/user/update-username", app.BaseHandler.UpdateUsername, app.AuthUserMiddleware())
 	e.PUT("/v1/user/update-image", app.BaseHandler.UpdateImage, app.AuthUserMiddleware())
 
-	e.POST("/v1/tokens/refresh", app.BaseHandler.RefreshTokens, app.AuthTokenMiddleware())
+	e.POST("/v1/tokens/refresh", app.BaseHandler.RefreshTokens)
 
 	//Social relations
 	e.GET("/v1/search", app.BaseHandler.Search, app.AuthUserMiddleware())

@@ -12,16 +12,6 @@
 				"disabledSystemHeaders": {}
 			},
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NfdXVpZCI6IjZhYjM2ZmIwLTRjNmMtNGU1MC04NjBiLTk0Y2VhNDU0YTFmNiIsImV4cCI6MTY4MTU3OTI0NCwidXNlcl9pZCI6MX0.ZLGbSgNdnv7_5xX7NEBXU26Kgp9k2SywlV99crFc70w",
-							"type": "string"
-						}
-					]
-				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -78,7 +68,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\": \"username123\",\n    \"password\": \"Qwerty12#123\"\n}",
+					"raw": "{\n    \"username\": \"user\",\n    \"password\": \"Qwerty12#\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -105,16 +95,6 @@
 				"disabledSystemHeaders": {}
 			},
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NVdWlkIjoiNThiMWM2ZWMtOTUyYy00ZGRkLWE3MWQtZGYxZjg3NzcwMGM0IiwiZXhwIjoxNjgxNjA1MjA4LCJ1c2VySWQiOjV9.Si0Fb42DDtdcwGsh83AsnImiaj-mSzxnHjoXVo5sanU",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [],
 				"url": {
@@ -137,16 +117,6 @@
 				"disabledSystemHeaders": {}
 			},
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NVdWlkIjoiZGQyZWVmYWEtNmU2OC00MWRlLTliNGUtODFmYjcyODgwYmUxIiwiZXhwIjoxNjgxNjA1MTI5LCJ1c2VySWQiOjV9.f5MrtriLqcw3icVJ4yzR7PkvTgkKzGIJ8WaFqEW7h38",
-							"type": "string"
-						}
-					]
-				},
 				"method": "PUT",
 				"header": [],
 				"body": {
@@ -178,16 +148,6 @@
 				"disabledSystemHeaders": {}
 			},
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NVdWlkIjoiZGQyZWVmYWEtNmU2OC00MWRlLTliNGUtODFmYjcyODgwYmUxIiwiZXhwIjoxNjgxNjA1MTI5LCJ1c2VySWQiOjV9.f5MrtriLqcw3icVJ4yzR7PkvTgkKzGIJ8WaFqEW7h38",
-							"type": "string"
-						}
-					]
-				},
 				"method": "PUT",
 				"header": [],
 				"body": {
@@ -219,16 +179,6 @@
 				"disabledSystemHeaders": {}
 			},
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NVdWlkIjoiZGQyZWVmYWEtNmU2OC00MWRlLTliNGUtODFmYjcyODgwYmUxIiwiZXhwIjoxNjgxNjA1MTI5LCJ1c2VySWQiOjV9.f5MrtriLqcw3icVJ4yzR7PkvTgkKzGIJ8WaFqEW7h38",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -260,16 +210,6 @@
 				"disabledSystemHeaders": {}
 			},
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NVdWlkIjoiNThiMWM2ZWMtOTUyYy00ZGRkLWE3MWQtZGYxZjg3NzcwMGM0IiwiZXhwIjoxNjgxNjA1MjA4LCJ1c2VySWQiOjV9.Si0Fb42DDtdcwGsh83AsnImiaj-mSzxnHjoXVo5sanU",
-							"type": "string"
-						}
-					]
-				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -298,6 +238,66 @@
 							"key": "limit",
 							"value": "1"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/follow",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": 3\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/v1/follow",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"follow"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/block",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": 4\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/v1/block",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"block"
 					]
 				}
 			},
