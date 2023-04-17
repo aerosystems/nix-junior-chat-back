@@ -34,6 +34,11 @@ func (h *BaseHandler) RefreshTokens(c echo.Context) error {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid request body", err)
 	}
 
+	if requestPayload == (RefreshTokenRequestBody{}) {
+		err := fmt.Errorf("empty request body")
+		return ErrorResponse(c, http.StatusBadRequest, "invalid request body", err)
+	}
+
 	// validate & parse refresh token claims
 	refreshTokenClaims, err := h.tokensRepo.DecodeRefreshToken(requestPayload.RefreshToken)
 	if err != nil {

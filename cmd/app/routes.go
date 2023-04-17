@@ -20,7 +20,7 @@ func (app *Config) NewRouter() *echo.Echo {
 
 	e.PUT("/v1/user/update-password", app.BaseHandler.UpdatePassword, app.AuthUserMiddleware())
 	e.PUT("/v1/user/update-username", app.BaseHandler.UpdateUsername, app.AuthUserMiddleware())
-	e.PUT("/v1/user/update-image", app.BaseHandler.UpdateImage, app.AuthUserMiddleware())
+	e.POST("/v1/user/upload-image", app.BaseHandler.UploadImage, app.AuthUserMiddleware())
 
 	e.POST("/v1/tokens/refresh", app.BaseHandler.RefreshTokens)
 

@@ -9,6 +9,7 @@ type User struct {
 	ID            int            `json:"id" gorm:"primaryKey" example:"1"`
 	Username      string         `json:"username" gorm:"unique" example:"username"`
 	Password      string         `json:"-"`
+	Image         string         `json:"image" example:"image.png"`
 	FollowedUsers []*User        `json:"followedUsers" gorm:"many2many:followed_users"`
 	BlockedUsers  []*User        `json:"blockedUsers" gorm:"many2many:blocked_users"`
 	CreatedAt     time.Time      `json:"-"`

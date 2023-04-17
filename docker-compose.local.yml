@@ -8,6 +8,8 @@ services:
     build: ./nginx
     ports:
       - "80:80"
+    volumes:
+      - ./images:${IMAGES_DIRECTORY_PATH}
 
   # Golang binary chat-service
   chat-service:
@@ -31,6 +33,9 @@ services:
       ACCESS_EXP_MINUTES: ${ACCESS_EXP_MINUTES}
       REFRESH_SECRET: ${REFRESH_SECRET}
       REFRESH_EXP_MINUTES: ${REFRESH_EXP_MINUTES}
+      IMAGES_DIRECTORY_PATH: ${IMAGES_DIRECTORY_PATH}
+    volumes:
+      - ./images:${IMAGES_DIRECTORY_PATH}
       
   # MySQL
   mysql:

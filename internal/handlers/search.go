@@ -14,6 +14,7 @@ import (
 // @Tags search
 // @Accept  json
 // @Produce application/json
+// @Param Authorization header string true "should contain Access Token, with the Bearer started"
 // @Param q query string true "query string for search by username, minimum 3 characters, maximum 40 characters"
 // @Param type query string false "type of search, default: 'user', available: 'user', 'friend', 'blacklist'"
 // @Param order query string false "order of search, default: 'asc', available: 'asc', 'desc'"
