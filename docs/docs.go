@@ -48,7 +48,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.BlockRequest"
+                            "$ref": "#/definitions/handlers.BlockRequestBody"
                         }
                     }
                 ],
@@ -106,7 +106,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.FollowRequest"
+                            "$ref": "#/definitions/handlers.FollowRequestBody"
                         }
                     }
                 ],
@@ -640,7 +640,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "handlers.BlockRequest": {
+        "handlers.BlockRequestBody": {
             "type": "object",
             "properties": {
                 "userId": {
@@ -649,7 +649,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.FollowRequest": {
+        "handlers.FollowRequestBody": {
             "type": "object",
             "properties": {
                 "userId": {

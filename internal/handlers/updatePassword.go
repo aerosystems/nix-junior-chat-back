@@ -71,5 +71,5 @@ func (h *BaseHandler) UpdatePassword(c echo.Context) error {
 		return ErrorResponse(c, http.StatusInternalServerError, "error updating password", err)
 	}
 
-	return SuccessResponse(c, http.StatusOK, "password successfuly updated", nil)
+	return SuccessResponse(c, http.StatusOK, "password successfully updated", nil)
 }

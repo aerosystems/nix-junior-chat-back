@@ -40,6 +40,11 @@ func (h *BaseHandler) RefreshTokens(c echo.Context) error {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid refresh token", err)
 	}
 
+	if value, _ := h.tokensRepo.GetCacheValue(refreshTokenClaims.RefreshUUID); value == nil {
+		err := fmt.Errorf("refresh token %s not found in cache", refreshTokenClaims.RefreshUUID)
+		return ErrorResponse(c, http.StatusUnauthorized, "refresh token expired", err)
+	}
+
 	// drop Refresh Token from Redis Cache
 	_ = h.tokensRepo.DropCacheKey(refreshTokenClaims.RefreshUUID)
 

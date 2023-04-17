@@ -11,7 +11,7 @@ import (
 	"github.com/aerosystems/nix-junior-chat-back/pkg/mysql/mygorm"
 )
 
-const webPort = 8080
+const webPort = 80
 
 type Config struct {
 	BaseHandler *handlers.BaseHandler

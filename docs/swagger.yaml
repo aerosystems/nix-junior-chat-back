@@ -1,12 +1,12 @@
 basePath: /
 definitions:
-  handlers.BlockRequest:
+  handlers.BlockRequestBody:
     properties:
       userId:
         example: 1
         type: integer
     type: object
-  handlers.FollowRequest:
+  handlers.FollowRequestBody:
     properties:
       userId:
         example: 1
@@ -123,7 +123,7 @@ paths:
         name: follow
         required: true
         schema:
-          $ref: '#/definitions/handlers.BlockRequest'
+          $ref: '#/definitions/handlers.BlockRequestBody'
       produces:
       - application/json
       responses:
@@ -161,7 +161,7 @@ paths:
         name: follow
         required: true
         schema:
-          $ref: '#/definitions/handlers.FollowRequest'
+          $ref: '#/definitions/handlers.FollowRequestBody'
       produces:
       - application/json
       responses:

@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-type BlockRequest struct {
+type BlockRequestBody struct {
 	UserID int `json:"userId" example:"1"`
 }
 
@@ -17,7 +17,7 @@ type BlockRequest struct {
 // @Accept  json
 // @Produce application/json
 // @Param Authorization header string true "should contain Access Token, with the Bearer started"
-// @Param follow body BlockRequest true "raw request body"
+// @Param follow body BlockRequestBody true "raw request body"
 // @Success 200 {object} Response
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response
@@ -25,7 +25,7 @@ type BlockRequest struct {
 // @Router /v1/block [post]
 func (h *BaseHandler) Block(c echo.Context) error {
 	user := c.Get("user").(*models.User)
-	var requestPayload BlockRequest
+	var requestPayload BlockRequestBody
 
 	if err := c.Bind(&requestPayload); err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid request payload", err)

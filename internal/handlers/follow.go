@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-type FollowRequest struct {
+type FollowRequestBody struct {
 	UserID int `json:"userId" example:"1"`
 }
 
@@ -17,7 +17,7 @@ type FollowRequest struct {
 // @Accept  json
 // @Produce application/json
 // @Param Authorization header string true "should contain Access Token, with the Bearer started"
-// @Param follow body FollowRequest true "raw request body"
+// @Param follow body FollowRequestBody true "raw request body"
 // @Success 200 {object} Response
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response
@@ -25,7 +25,7 @@ type FollowRequest struct {
 // @Router /v1/follow [post]
 func (h *BaseHandler) Follow(c echo.Context) error {
 	user := c.Get("user").(*models.User)
-	var requestPayload FollowRequest
+	var requestPayload FollowRequestBody
 
 	if err := c.Bind(&requestPayload); err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid request payload", err)
