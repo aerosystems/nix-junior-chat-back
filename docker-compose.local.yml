@@ -23,7 +23,7 @@ services:
       mode: replicated
       replicas: 1
     environment:
-      CODE_EXP_MINUTES: ${CODE_EXP_MINUTES}
+      APP_ENV: ${APP_ENV}
       MYSQL_DSN: ${MYSQL_DSN}
       REDIS_DSN: ${REDIS_DSN}
       REDIS_PASSWORD: ${REDIS_PASSWORD}

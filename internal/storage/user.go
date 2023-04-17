@@ -29,7 +29,7 @@ func (r *UserRepo) FindAll() (*[]models.User, error) {
 
 func (r *UserRepo) FindByID(id int) (*models.User, error) {
 	var user models.User
-	result := r.db.Find(&user, id)
+	result := r.db.Preload("FollowedUsers").Preload("BlockedUsers").Find(&user, id)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -43,6 +43,12 @@ func (r *UserRepo) FindByUsername(username string) (*models.User, error) {
 		return nil, result.Error
 	}
 	return &user, nil
+}
+
+func (r *UserRepo) FindArrayByPartUsername(username string, order string, limit int) (*[]models.User, error) {
+	var users []models.User
+	r.db.Where("username LIKE ?", username+"%").Order("username " + order).Limit(limit).Find(&users)
+	return &users, nil
 }
 
 func (r *UserRepo) Create(user *models.User) error {
@@ -97,6 +103,5 @@ func (r *UserRepo) PasswordMatches(user *models.User, plainText string) (bool, e
 			return false, err
 		}
 	}
-
 	return true, nil
 }

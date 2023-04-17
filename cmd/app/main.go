@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/labstack/gommon/log"
+
 	"github.com/aerosystems/nix-junior-chat-back/internal/handlers"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
 	"github.com/aerosystems/nix-junior-chat-back/internal/storage"
@@ -9,11 +11,12 @@ import (
 	"github.com/aerosystems/nix-junior-chat-back/pkg/mysql/mygorm"
 )
 
-const webPort = 8080
+const webPort = 80
 
 type Config struct {
-	BaseHandler       *handlers.BaseHandler
-	TokensRepo        models.TokensRepository
+	BaseHandler *handlers.BaseHandler
+	UserRepo    models.UserRepository
+	TokensRepo  models.TokensRepository
 }
 
 // @title NIX Junior: Chat App
@@ -27,7 +30,7 @@ type Config struct {
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @host localhost:80
-// @BasePath /v1
+// @BasePath /
 func main() {
 	clientGORM := mygorm.NewClient()
 	clientGORM.AutoMigrate(models.User{})
@@ -40,10 +43,12 @@ func main() {
 			userRepo,
 			tokensRepo,
 		),
+		UserRepo:   userRepo,
 		TokensRepo: tokensRepo,
 	}
 
 	e := app.NewRouter()
 	app.AddMiddleware(e)
+	e.Logger.SetLevel(log.INFO)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", webPort)))
 }

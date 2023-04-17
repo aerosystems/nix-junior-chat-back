@@ -45,12 +45,10 @@ func (r *TokensRepo) CreateCacheKey(userID int, td *models.TokenDetails) error {
 		return err
 	}
 
-	err = r.cache.Set(td.AccessUuid.String(), cacheJSON, at.Sub(now)).Err()
-	if err != nil {
+	if err := r.cache.Set(td.AccessUuid.String(), cacheJSON, at.Sub(now)).Err(); err != nil {
 		return err
 	}
-	err = r.cache.Set(td.RefreshUuid.String(), strconv.Itoa(userID), rt.Sub(now)).Err()
-	if err != nil {
+	if err := r.cache.Set(td.RefreshUuid.String(), strconv.Itoa(userID), rt.Sub(now)).Err(); err != nil {
 		return err
 	}
 	return nil
@@ -85,8 +83,8 @@ func (r *TokensRepo) CreateToken(userid int) (*models.TokenDetails, error) {
 	td.RefreshUuid = uuid.New()
 
 	atClaims := jwt.MapClaims{}
-	atClaims["access_uuid"] = td.AccessUuid.String()
-	atClaims["user_id"] = userid
+	atClaims["accessUuid"] = td.AccessUuid.String()
+	atClaims["userId"] = userid
 	atClaims["exp"] = td.AtExpires
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	td.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
@@ -95,8 +93,8 @@ func (r *TokensRepo) CreateToken(userid int) (*models.TokenDetails, error) {
 	}
 
 	rtClaims := jwt.MapClaims{}
-	rtClaims["refresh_uuid"] = td.RefreshUuid
-	rtClaims["user_id"] = userid
+	rtClaims["refreshUuid"] = td.RefreshUuid.String()
+	rtClaims["userId"] = userid
 	rtClaims["exp"] = td.RtExpires
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
 	td.RefreshToken, err = rt.SignedString([]byte(os.Getenv("REFRESH_SECRET")))

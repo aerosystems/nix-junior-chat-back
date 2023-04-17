@@ -31,40 +31,39 @@ type RegistrationRequestBody struct {
 // @Tags auth
 // @Accept  json
 // @Produce application/json
-// @Param registration body handlers.RegistrationRequestBody true "raw request body"
+// @Param registration body RegistrationRequestBody true "raw request body"
 // @Success 200 {object} Response
 // @Failure 400 {object} Response
 // @Failure 404 {object} Response
-// @Router /user/register [post]
+// @Failure 500 {object} Response
+// @Router /v1/user/register [post]
 func (h *BaseHandler) Registration(c echo.Context) error {
 	var requestPayload RegistrationRequestBody
 
 	if err := c.Bind(&requestPayload); err != nil {
-		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
+		return ErrorResponse(c, http.StatusBadRequest, "invalid request body", err)
 	}
 
 	if err := helpers.ValidateUsername(requestPayload.Username); err != nil {
-		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
+		return ErrorResponse(c, http.StatusBadRequest, "invalid username", err)
 	}
 
 	err := helpers.ValidatePassword(requestPayload.Password)
 	if err != nil {
-		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
+		return ErrorResponse(c, http.StatusBadRequest, "invalid password", err)
 	}
-
-	var payload Response
 
 	//checking if username is existing
 	user, _ := h.userRepo.FindByUsername(requestPayload.Username)
 	if user != nil {
 		err = fmt.Errorf("user with username %s already exists", requestPayload.Username)
-		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
+		return ErrorResponse(c, http.StatusBadRequest, err.Error(), err)
 	}
 
 	// hashing password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(requestPayload.Password), 12)
 	if err != nil {
-		return err
+		return ErrorResponse(c, http.StatusInternalServerError, "error hashing password", err)
 	}
 
 	// creating new user
@@ -75,16 +74,10 @@ func (h *BaseHandler) Registration(c echo.Context) error {
 	err = h.userRepo.Create(&newUser)
 
 	if err != nil {
-		return WriteResponse(c, http.StatusBadRequest, NewErrorPayload(err))
+		return ErrorResponse(c, http.StatusInternalServerError, "error creating user", err)
 	}
 
-	// TODO makemethods for cornirm user account
+	// TODO make & run methods for confirm user account
 
-	payload = Response{
-		Error:   false,
-		Message: fmt.Sprintf("user with username: %s successfully created", requestPayload.Username),
-		Data:    nil,
-	}
-
-	return WriteResponse(c, http.StatusOK, payload)
+	return SuccessResponse(c, http.StatusOK, fmt.Sprintf("user with username: %s successfully created", requestPayload.Username), nil)
 }
