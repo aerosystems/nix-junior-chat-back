@@ -154,6 +154,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "should contain Access Token, with the Bearer started",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "query string for search by username, minimum 3 characters, maximum 40 characters",
                         "name": "q",
                         "in": "query",
@@ -514,6 +521,13 @@ const docTemplate = `{
                 "summary": "update password",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "should contain Access Token, with the Bearer started",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "raw request body",
                         "name": "password",
                         "in": "body",
@@ -566,6 +580,13 @@ const docTemplate = `{
                 "summary": "update username",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "should contain Access Token, with the Bearer started",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "raw request body",
                         "name": "username",
                         "in": "body",
@@ -573,6 +594,57 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/handlers.UpdateUsernameRequestBody"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user/upload-image": {
+            "post": {
+                "description": "Uploading user image as file by form-data \"image\"",
+                "tags": [
+                    "user"
+                ],
+                "summary": "Upload user image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "should contain Access Token, with the Bearer started",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "User image file. The preferred size is 315x315px because the image will resize to 315x315px. Max size: 2MB, Allowed types: 'jpg', 'jpeg', 'png', 'gif'",
+                        "name": "image",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -773,6 +845,10 @@ const docTemplate = `{
                 "id": {
                     "type": "integer",
                     "example": 1
+                },
+                "image": {
+                    "type": "string",
+                    "example": "image.png"
                 },
                 "username": {
                     "type": "string",

@@ -27,6 +27,7 @@ type UpdatePasswordRequestBody struct {
 // @Tags user
 // @Accept  json
 // @Produce application/json
+// @Param Authorization header string true "should contain Access Token, with the Bearer started"
 // @Param password body UpdatePasswordRequestBody true "raw request body"
 // @Success 200 {object} Response
 // @Failure 400 {object} Response

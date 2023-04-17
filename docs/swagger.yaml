@@ -92,6 +92,9 @@ definitions:
       id:
         example: 1
         type: integer
+      image:
+        example: image.png
+        type: string
       username:
         example: username
         type: string
@@ -190,6 +193,11 @@ paths:
       - application/json
       description: Search users by username with autocomplete
       parameters:
+      - description: should contain Access Token, with the Bearer started
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: query string for search by username, minimum 3 characters, maximum
           40 characters
         in: query
@@ -450,6 +458,11 @@ paths:
         - minimum 8 characters length
         - maximum 40 characters length
       parameters:
+      - description: should contain Access Token, with the Bearer started
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: raw request body
         in: body
         name: password
@@ -488,6 +501,11 @@ paths:
         - minimum 8 characters length
         - maximum 40 characters length
       parameters:
+      - description: should contain Access Token, with the Bearer started
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: raw request body
         in: body
         name: username
@@ -514,6 +532,42 @@ paths:
           schema:
             $ref: '#/definitions/handlers.Response'
       summary: update username
+      tags:
+      - user
+  /v1/user/upload-image:
+    post:
+      description: Uploading user image as file by form-data "image"
+      parameters:
+      - description: should contain Access Token, with the Bearer started
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 'User image file. The preferred size is 315x315px because the
+          image will resize to 315x315px. Max size: 2MB, Allowed types: ''jpg'', ''jpeg'',
+          ''png'', ''gif'''
+        in: formData
+        name: image
+        required: true
+        type: file
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: Upload user image
       tags:
       - user
   /ws/chat:
