@@ -161,7 +161,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "query string for search by username, minimum 3 characters, maximum 40 characters",
+                        "description": "query string for search by username, minimum 1 characters, maximum 40 characters",
                         "name": "q",
                         "in": "query",
                         "required": true

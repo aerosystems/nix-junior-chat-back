@@ -198,7 +198,7 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: query string for search by username, minimum 3 characters, maximum
+      - description: query string for search by username, minimum 1 characters, maximum
           40 characters
         in: query
         name: q

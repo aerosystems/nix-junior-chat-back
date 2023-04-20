@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"github.com/aerosystems/nix-junior-chat-back/internal/helpers"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -15,7 +16,7 @@ import (
 // @Accept  json
 // @Produce application/json
 // @Param Authorization header string true "should contain Access Token, with the Bearer started"
-// @Param q query string true "query string for search by username, minimum 3 characters, maximum 40 characters"
+// @Param q query string true "query string for search by username, minimum 1 characters, maximum 40 characters"
 // @Param type query string false "type of search, default: 'user', available: 'user', 'friend', 'blacklist'"
 // @Param order query string false "order of search, default: 'asc', available: 'asc', 'desc'"
 // @Param limit query int false "limit of search, default: '10', available: '1-1000'"
@@ -27,7 +28,7 @@ import (
 // @Router /v1/search [get]
 func (h *BaseHandler) Search(c echo.Context) error {
 	query := c.QueryParam("q")
-	if err := helpers.ValidateUsername(query); err != nil {
+	if err := helpers.ValidateQuery(query); err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid query. "+err.Error(), err)
 	}
 
@@ -65,9 +66,9 @@ func (h *BaseHandler) Search(c echo.Context) error {
 	if err != nil {
 		return ErrorResponse(c, http.StatusInternalServerError, "internal server error finding users", err)
 	}
-	if users == nil {
-		err := errors.New("users not found")
-		return ErrorResponse(c, http.StatusNotFound, err.Error(), err)
+	if users == nil || len(*users) == 0 {
+		err := fmt.Errorf("users with username %s not found", query)
+		return ErrorResponse(c, http.StatusNotFound, "users not found", err)
 	}
 
 	return SuccessResponse(c, http.StatusOK, "users found successfully", users)
