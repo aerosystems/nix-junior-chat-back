@@ -34,9 +34,10 @@ services:
       REFRESH_SECRET: ${REFRESH_SECRET}
       REFRESH_EXP_MINUTES: ${REFRESH_EXP_MINUTES}
       IMAGES_DIRECTORY_PATH: ${IMAGES_DIRECTORY_PATH}
+      URL_PREFIX_IMAGES: ${URL_PREFIX_IMAGES}
     volumes:
       - ./images:${IMAGES_DIRECTORY_PATH}
-      
+
   # MySQL
   mysql:
     container_name: mysql
@@ -50,7 +51,7 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     ports:
-      - 3306:3306
+      - ${MYSQL_PORT}:${MYSQL_PORT}
     volumes:
       - "./db/mysql/data:/var/lib/mysql"
       - "./db/mysql/my.cnf:/etc/mysql/conf.d/my.cnf"
@@ -58,11 +59,11 @@ services:
 
   # Redis
   redis:
-   container_name: redis
-   image: "redis:6.2-alpine"
-   restart: unless-stopped
-   ports:
-     - 6379:6379
-   command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
-   volumes: 
+    container_name: redis
+    image: "redis:6.2-alpine"
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+    volumes:
       - "./db/redis:/data"

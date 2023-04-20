@@ -2,6 +2,7 @@ package models
 
 import (
 	"gorm.io/gorm"
+	"os"
 	"time"
 )
 
@@ -27,4 +28,13 @@ type UserRepository interface {
 	Delete(user *User) error
 	ResetPassword(user *User, password string) error
 	PasswordMatches(user *User, plainText string) (bool, error)
+}
+
+func (u *User) ModifyImage() {
+	if u.Image == "" {
+		u.Image = "default.png"
+	}
+	if os.Getenv("URL_PREFIX_IMAGES") != "" {
+		u.Image = os.Getenv("URL_PREFIX_IMAGES") + u.Image
+	}
 }
