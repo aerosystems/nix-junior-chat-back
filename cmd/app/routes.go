@@ -31,7 +31,7 @@ func (app *Config) NewRouter() *echo.Echo {
 	e.POST("/v1/user/follow/:id", app.BaseHandler.Follow, app.AuthUserMiddleware())
 	e.DELETE("/v1/user/follow/:id", app.BaseHandler.Unfollow, app.AuthUserMiddleware())
 	e.POST("/v1/user/block/:id", app.BaseHandler.Block, app.AuthUserMiddleware())
-	//e.DELETE("/v1/user/block/:id", app.BaseHandler.Unblock, app.AuthUserMiddleware())
+	e.DELETE("/v1/user/block/:id", app.BaseHandler.Unblock, app.AuthUserMiddleware())
 	//e.DELETE("/v1/user/chat/:id", app.BaseHandler.DeleteChat, app.AuthUserMiddleware())
 
 	//Chat

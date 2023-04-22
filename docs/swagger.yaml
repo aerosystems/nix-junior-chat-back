@@ -1,11 +1,5 @@
 basePath: /
 definitions:
-  handlers.BlockRequestBody:
-    properties:
-      userId:
-        example: 1
-        type: integer
-    type: object
   handlers.LoginRequestBody:
     properties:
       password:
@@ -109,41 +103,6 @@ info:
   title: 'NIX Junior: Chat App'
   version: "1.0"
 paths:
-  /v1/block:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: raw request body
-        in: body
-        name: follow
-        required: true
-        schema:
-          $ref: '#/definitions/handlers.BlockRequestBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.Response'
-      security:
-      - BearerAuth: []
-      summary: Block user
-      tags:
-      - relationship
   /v1/search:
     get:
       consumes:
@@ -272,6 +231,82 @@ paths:
       summary: Get user data
       tags:
       - user
+  /v1/user/block/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Unblocked User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
+      summary: Unblock user
+      tags:
+      - relationship
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Blocked User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
+      summary: Block user
+      tags:
+      - relationship
   /v1/user/follow/{id}:
     delete:
       consumes:
