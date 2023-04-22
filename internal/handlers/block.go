@@ -16,8 +16,8 @@ type BlockRequestBody struct {
 // @Tags relationship
 // @Accept  json
 // @Produce application/json
-// @Param Authorization header string true "should contain Access Token, with the Bearer started"
 // @Param follow body BlockRequestBody true "raw request body"
+// @Security BearerAuth
 // @Success 200 {object} Response
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response

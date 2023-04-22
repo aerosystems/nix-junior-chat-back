@@ -12,8 +12,8 @@ import (
 // @Tags user
 // @Accept  json
 // @Produce application/json
-// @Param Authorization header string true "should contain Access Token, with the Bearer started"
-// @Success 200 {object} Response
+// @Security BearerAuth
+// @Success 200 {object} Response{data=models.User}
 // @Failure 401 {object} Response
 // @Failure 500 {object} Response
 // @Router /v1/user [get]

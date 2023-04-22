@@ -16,8 +16,8 @@ import (
 // @Summary Upload user image
 // @Description Uploading user image as file by form-data "image"
 // @Tags user
-// @Param Authorization header string true "should contain Access Token, with the Bearer started"
 // @Param image formData file true "User image file. The preferred size is 315x315px because the image will resize to 315x315px. Max size: 2MB, Allowed types: 'jpg', 'jpeg', 'png', 'gif'"
+// @Security BearerAuth
 // @Success 200 {object} Response
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response

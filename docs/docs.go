@@ -24,6 +24,11 @@ const docTemplate = `{
     "paths": {
         "/v1/block": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -35,13 +40,6 @@ const docTemplate = `{
                 ],
                 "summary": "Block user",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "should contain Access Token, with the Bearer started",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "description": "raw request body",
                         "name": "follow",
@@ -80,66 +78,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/follow": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "relationship"
-                ],
-                "summary": "Follow user",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "should contain Access Token, with the Bearer started",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "raw request body",
-                        "name": "follow",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/handlers.FollowRequestBody"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/v1/search": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Search users by username with autocomplete",
                 "consumes": [
                     "application/json"
@@ -152,13 +97,6 @@ const docTemplate = `{
                 ],
                 "summary": "search users",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "should contain Access Token, with the Bearer started",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "query string for search by username, minimum 1 characters, maximum 40 characters",
@@ -299,6 +237,11 @@ const docTemplate = `{
         },
         "/v1/user": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get user data",
                 "consumes": [
                     "application/json"
@@ -310,6 +253,52 @@ const docTemplate = `{
                     "user"
                 ],
                 "summary": "Get user data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handlers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user/follow/{id}": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "relationship"
+                ],
+                "summary": "Follow user",
                 "parameters": [
                     {
                         "type": "string",
@@ -317,11 +306,36 @@ const docTemplate = `{
                         "name": "Authorization",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Followed User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handlers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/handlers.Response"
                         }
@@ -407,6 +421,11 @@ const docTemplate = `{
         },
         "/v1/user/logout": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -417,15 +436,6 @@ const docTemplate = `{
                     "auth"
                 ],
                 "summary": "logout user",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "should contain Access Token, with the Bearer started",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -508,6 +518,11 @@ const docTemplate = `{
         },
         "/v1/user/update-password": {
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "OldPassword/NewPassword should contain:\n- minimum of one small case letter\n- minimum of one upper case letter\n- minimum of one digit\n- minimum of one special character\n- minimum 8 characters length\n- maximum 40 characters length",
                 "consumes": [
                     "application/json"
@@ -520,13 +535,6 @@ const docTemplate = `{
                 ],
                 "summary": "update password",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "should contain Access Token, with the Bearer started",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "description": "raw request body",
                         "name": "password",
@@ -567,6 +575,11 @@ const docTemplate = `{
         },
         "/v1/user/update-username": {
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Username should contain:\n- lower, upper case latin letters and digits\n- minimum 8 characters length\n- maximum 40 characters length",
                 "consumes": [
                     "application/json"
@@ -579,13 +592,6 @@ const docTemplate = `{
                 ],
                 "summary": "update username",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "should contain Access Token, with the Bearer started",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "description": "raw request body",
                         "name": "username",
@@ -626,19 +632,17 @@ const docTemplate = `{
         },
         "/v1/user/upload-image": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Uploading user image as file by form-data \"image\"",
                 "tags": [
                     "user"
                 ],
                 "summary": "Upload user image",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "should contain Access Token, with the Bearer started",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "file",
                         "description": "User image file. The preferred size is 315x315px because the image will resize to 315x315px. Max size: 2MB, Allowed types: 'jpg', 'jpeg', 'png', 'gif'",
@@ -713,15 +717,6 @@ const docTemplate = `{
     },
     "definitions": {
         "handlers.BlockRequestBody": {
-            "type": "object",
-            "properties": {
-                "userId": {
-                    "type": "integer",
-                    "example": 1
-                }
-            }
-        },
-        "handlers.FollowRequestBody": {
             "type": "object",
             "properties": {
                 "userId": {
@@ -836,6 +831,12 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.User"
                     }
                 },
+                "chats": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.User"
+                    }
+                },
                 "followedUsers": {
                     "type": "array",
                     "items": {
@@ -855,6 +856,14 @@ const docTemplate = `{
                     "example": "username"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Should contain Access JWT Token, with the Bearer started",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

@@ -29,6 +29,11 @@ type Config struct {
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Should contain Access JWT Token, with the Bearer started
+
 // @host localhost:80
 // @BasePath /
 func main() {
