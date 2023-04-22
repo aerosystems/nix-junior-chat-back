@@ -13,8 +13,8 @@ import (
 // @Tags relationship
 // @Accept  json
 // @Produce application/json
-// @Param Authorization header string true "should contain Access Token, with the Bearer started"
 // @Param	id	path	int	true	"Followed User ID"
+// @Security BearerAuth
 // @Success 200 {object} Response{data=models.User}
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response

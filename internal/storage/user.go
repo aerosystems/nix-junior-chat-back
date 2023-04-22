@@ -60,9 +60,33 @@ func (r *UserRepo) Create(user *models.User) error {
 }
 
 func (r *UserRepo) Update(user *models.User) error {
-	result := r.db.Save(&user)
+	result := r.db.Session(&gorm.Session{FullSaveAssociations: true}).Save(&user)
 	if result.Error != nil {
 		return result.Error
+	}
+	return nil
+}
+
+func (r *UserRepo) ReplaceFollowedUsers(user *models.User, followedUsers []*models.User) error {
+	err := r.db.Model(&user).Association("FollowedUsers").Replace(followedUsers)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *UserRepo) ReplaceBlockedUsers(user *models.User, blockedUsers []*models.User) error {
+	err := r.db.Model(&user).Association("BlockedUsers").Replace(blockedUsers)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *UserRepo) ReplaceChatUsers(user *models.User, chatUsers []*models.User) error {
+	err := r.db.Model(&user).Association("ChatUsers").Replace(chatUsers)
+	if err != nil {
+		return err
 	}
 	return nil
 }

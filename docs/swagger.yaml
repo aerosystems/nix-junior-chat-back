@@ -273,15 +273,52 @@ paths:
       tags:
       - user
   /v1/user/follow/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Followed User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
+      summary: Unfollow user
+      tags:
+      - relationship
     post:
       consumes:
       - application/json
       parameters:
-      - description: should contain Access Token, with the Bearer started
-        in: header
-        name: Authorization
-        required: true
-        type: string
       - description: Followed User ID
         in: path
         name: id
@@ -311,6 +348,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
       summary: Follow user
       tags:
       - relationship

@@ -27,6 +27,9 @@ type UserRepository interface {
 	Create(user *User) error
 	Update(user *User) error
 	Delete(user *User) error
+	ReplaceFollowedUsers(user *User, followedUsers []*User) error
+	ReplaceBlockedUsers(user *User, blockedUsers []*User) error
+	ReplaceChatUsers(user *User, chatUsers []*User) error
 	ResetPassword(user *User, password string) error
 	PasswordMatches(user *User, plainText string) (bool, error)
 }
