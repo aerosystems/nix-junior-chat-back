@@ -84,7 +84,7 @@ func (r *UserRepo) ReplaceBlockedUsers(user *models.User, blockedUsers []*models
 }
 
 func (r *UserRepo) ReplaceChatUsers(user *models.User, chatUsers []*models.User) error {
-	err := r.db.Model(&user).Association("ChatUsers").Replace(chatUsers)
+	err := r.db.Model(&user).Association("Chats").Replace(chatUsers)
 	if err != nil {
 		return err
 	}

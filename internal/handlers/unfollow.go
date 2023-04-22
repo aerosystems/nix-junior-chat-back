@@ -32,7 +32,10 @@ func (h *BaseHandler) Unfollow(c echo.Context) error {
 	for i, item := range user.FollowedUsers {
 		if item.ID == followedUserID {
 			followedUsers := append(user.FollowedUsers[:i], user.FollowedUsers[i+1:]...)
-			h.userRepo.ReplaceFollowedUsers(user, followedUsers)
+			err := h.userRepo.ReplaceFollowedUsers(user, followedUsers)
+			if err != nil {
+				return ErrorResponse(c, http.StatusInternalServerError, "failed to unfollow user", err)
+			}
 
 			updatedUser, _ := h.userRepo.FindByID(user.ID)
 			updatedUser.ModifyImage()

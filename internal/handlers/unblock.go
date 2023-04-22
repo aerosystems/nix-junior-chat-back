@@ -32,7 +32,10 @@ func (h *BaseHandler) Unblock(c echo.Context) error {
 	for i, item := range user.BlockedUsers {
 		if item.ID == blockedUserID {
 			followedUsers := append(user.BlockedUsers[:i], user.BlockedUsers[i+1:]...)
-			h.userRepo.ReplaceBlockedUsers(user, followedUsers)
+			err := h.userRepo.ReplaceBlockedUsers(user, followedUsers)
+			if err != nil {
+				return ErrorResponse(c, http.StatusInternalServerError, "failed to unblock user", err)
+			}
 
 			updatedUser, _ := h.userRepo.FindByID(user.ID)
 			updatedUser.ModifyImage()
