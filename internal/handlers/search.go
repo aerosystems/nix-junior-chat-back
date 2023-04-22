@@ -71,5 +71,8 @@ func (h *BaseHandler) Search(c echo.Context) error {
 		return ErrorResponse(c, http.StatusNotFound, "users not found", err)
 	}
 
+	for i := range *users {
+		(*users)[i].ModifyImage()
+	}
 	return SuccessResponse(c, http.StatusOK, "users found successfully", users)
 }

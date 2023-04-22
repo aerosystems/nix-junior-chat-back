@@ -56,5 +56,7 @@ func (h *BaseHandler) Follow(c echo.Context) error {
 		return ErrorResponse(c, http.StatusInternalServerError, "error updating user", err)
 	}
 
-	return SuccessResponse(c, http.StatusOK, fmt.Sprintf("successfully followed user %s (id: %d)", followedUser.Username, followedUser.ID), user)
+	updatedUser, err := h.userRepo.FindByID(user.ID)
+	updatedUser.ModifyImage()
+	return SuccessResponse(c, http.StatusOK, fmt.Sprintf("successfully followed user %s (id: %d)", followedUser.Username, followedUser.ID), updatedUser)
 }

@@ -24,19 +24,15 @@ func NewUserRepo(db *gorm.DB, cache *redis.Client) *UserRepo {
 func (r *UserRepo) FindAll() (*[]models.User, error) {
 	var users []models.User
 	r.db.Find(&users)
-	for i := range users {
-		(users)[i].ModifyImage()
-	}
 	return &users, nil
 }
 
 func (r *UserRepo) FindByID(id int) (*models.User, error) {
 	var user models.User
-	result := r.db.Preload("FollowedUsers").Preload("BlockedUsers").Find(&user, id)
+	result := r.db.Preload("FollowedUsers").Preload("BlockedUsers").Preload("Chats").Find(&user, id)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	user.ModifyImage()
 	return &user, nil
 }
 
@@ -46,16 +42,12 @@ func (r *UserRepo) FindByUsername(username string) (*models.User, error) {
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	user.ModifyImage()
 	return &user, nil
 }
 
 func (r *UserRepo) FindArrayByPartUsername(username string, order string, limit int) (*[]models.User, error) {
 	var users []models.User
 	r.db.Where("username LIKE ?", username+"%").Order("username " + order).Limit(limit).Find(&users)
-	for i := range users {
-		(users)[i].ModifyImage()
-	}
 	return &users, nil
 }
 
@@ -112,9 +104,4 @@ func (r *UserRepo) PasswordMatches(user *models.User, plainText string) (bool, e
 		}
 	}
 	return true, nil
-}
-
-func modifyImage(u models.User) models.User {
-	u.Image = "/images/" + u.Image
-	return u
 }
