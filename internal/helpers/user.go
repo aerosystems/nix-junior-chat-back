@@ -9,8 +9,8 @@ func ValidateUsername(username string) error {
 	if len(username) < 4 {
 		return errors.New("username should be of 4 characters long")
 	}
-	if len(username) > 20 {
-		return errors.New("username length should be maximum 20 characters long")
+	if len(username) > 40 {
+		return errors.New("username length should be maximum 40 characters long")
 	}
 	done, err := regexp.MatchString("([a-zA-Z0-9])+", username)
 	if err != nil {

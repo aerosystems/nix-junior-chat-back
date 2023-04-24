@@ -12,13 +12,14 @@ import (
 // @Tags user
 // @Accept  json
 // @Produce application/json
-// @Param Authorization header string true "should contain Access Token, with the Bearer started"
-// @Success 200 {object} Response
+// @Security BearerAuth
+// @Success 200 {object} Response{data=models.User}
 // @Failure 401 {object} Response
 // @Failure 500 {object} Response
 // @Router /v1/user [get]
 func (h *BaseHandler) User(c echo.Context) error {
 	user := c.Get("user").(*models.User)
+	user.ModifyImage()
 
 	return SuccessResponse(c, http.StatusOK, "successfully found user data", user)
 }

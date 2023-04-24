@@ -31,12 +31,12 @@ var upgrader = websocket.Upgrader{
 // @Failure 401 {object} Response
 // @Router /ws/chat [get]
 func (h *BaseHandler) Chat(c echo.Context) error {
-	user, ok := c.Get("user").(*models.User)
+	sender, ok := c.Get("user").(*models.User)
 	if !ok {
 		err := errors.New("internal transport token error")
 		c.Logger().Error(err)
 	}
-	c.Logger().Info(fmt.Sprintf("client %d connected", user.ID))
+	c.Logger().Info(fmt.Sprintf("client %d connected", sender.ID))
 
 	ws, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
 	if err != nil {
@@ -46,7 +46,7 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 
 	client := &models.Client{
 		WS:   ws,
-		User: *user,
+		User: *sender,
 	}
 
 	clients = append(clients, client)
@@ -68,16 +68,47 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 		for _, client := range clients {
 			var responseMessage MessageResponseBody
 			if err := json.Unmarshal(msg, &responseMessage); err != nil {
-				reply := models.NewErrorMessage("invalid message format", user.ID)
+				reply := models.NewErrorMessage("invalid message format", sender.ID)
 				client.WS.WriteMessage(websocket.TextMessage, reply.Json())
 				c.Logger().Error(err)
 				continue
 			}
 
-			message := models.NewTextMessage(responseMessage.Content, user.ID, responseMessage.RecipientID)
+			recipient, err := h.userRepo.FindByID(responseMessage.RecipientID)
+			if err != nil {
+				reply := models.NewErrorMessage("invalid recipient id", sender.ID)
+				client.WS.WriteMessage(websocket.TextMessage, reply.Json())
+				c.Logger().Error(err)
+				continue
+			}
+			message := models.NewTextMessage(responseMessage.Content, sender.ID, responseMessage.RecipientID)
 
 			if client.User.ID == message.RecipientID {
 				client.WS.WriteMessage(websocket.TextMessage, message.Json())
+				// Adding chat to sender
+				status := false
+				for _, item := range sender.Chats {
+					if item.ID == recipient.ID {
+						status = true
+						break
+					}
+				}
+				if !status {
+					sender.Chats = append(sender.Chats, recipient)
+					h.userRepo.Update(sender)
+				}
+				// Adding chat to recipient
+				status = false
+				for _, item := range recipient.Chats {
+					if item.ID == sender.ID {
+						status = true
+						break
+					}
+				}
+				if !status {
+					recipient.Chats = append(recipient.Chats, sender)
+					h.userRepo.Update(recipient)
+				}
 			}
 		}
 	}

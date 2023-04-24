@@ -1,17 +1,5 @@
 basePath: /
 definitions:
-  handlers.BlockRequestBody:
-    properties:
-      userId:
-        example: 1
-        type: integer
-    type: object
-  handlers.FollowRequestBody:
-    properties:
-      userId:
-        example: 1
-        type: integer
-    type: object
   handlers.LoginRequestBody:
     properties:
       password:
@@ -85,6 +73,10 @@ definitions:
         items:
           $ref: '#/definitions/models.User'
         type: array
+      chats:
+        items:
+          $ref: '#/definitions/models.User'
+        type: array
       followedUsers:
         items:
           $ref: '#/definitions/models.User'
@@ -111,94 +103,13 @@ info:
   title: 'NIX Junior: Chat App'
   version: "1.0"
 paths:
-  /v1/block:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: should contain Access Token, with the Bearer started
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: raw request body
-        in: body
-        name: follow
-        required: true
-        schema:
-          $ref: '#/definitions/handlers.BlockRequestBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.Response'
-      summary: Block user
-      tags:
-      - relationship
-  /v1/follow:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: should contain Access Token, with the Bearer started
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: raw request body
-        in: body
-        name: follow
-        required: true
-        schema:
-          $ref: '#/definitions/handlers.FollowRequestBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.Response'
-      summary: Follow user
-      tags:
-      - relationship
   /v1/search:
     get:
       consumes:
       - application/json
       description: Search users by username with autocomplete
       parameters:
-      - description: should contain Access Token, with the Bearer started
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: query string for search by username, minimum 3 characters, maximum
+      - description: query string for search by username, minimum 1 characters, maximum
           40 characters
         in: query
         name: q
@@ -247,6 +158,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
       summary: search users
       tags:
       - search
@@ -293,17 +206,92 @@ paths:
       consumes:
       - application/json
       description: Get user data
-      parameters:
-      - description: should contain Access Token, with the Bearer started
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.User'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
+      summary: Get user data
+      tags:
+      - user
+  /v1/user/block/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Unblocked User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
+      summary: Unblock user
+      tags:
+      - relationship
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Blocked User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/handlers.Response'
         "401":
@@ -314,9 +302,135 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.Response'
-      summary: Get user data
+      security:
+      - BearerAuth: []
+      summary: Block user
       tags:
-      - user
+      - relationship
+  /v1/user/chat/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Chat User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
+      summary: DeleteChat user
+      tags:
+      - relationship
+  /v1/user/follow/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Followed User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
+      summary: Unfollow user
+      tags:
+      - relationship
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Followed User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
+      summary: Follow user
+      tags:
+      - relationship
   /v1/user/login:
     post:
       consumes:
@@ -372,12 +486,6 @@ paths:
     post:
       consumes:
       - application/json
-      parameters:
-      - description: should contain Access Token, with the Bearer started
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -397,6 +505,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
       summary: logout user
       tags:
       - auth
@@ -458,11 +568,6 @@ paths:
         - minimum 8 characters length
         - maximum 40 characters length
       parameters:
-      - description: should contain Access Token, with the Bearer started
-        in: header
-        name: Authorization
-        required: true
-        type: string
       - description: raw request body
         in: body
         name: password
@@ -488,6 +593,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
       summary: update password
       tags:
       - user
@@ -501,11 +608,6 @@ paths:
         - minimum 8 characters length
         - maximum 40 characters length
       parameters:
-      - description: should contain Access Token, with the Bearer started
-        in: header
-        name: Authorization
-        required: true
-        type: string
       - description: raw request body
         in: body
         name: username
@@ -531,6 +633,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
       summary: update username
       tags:
       - user
@@ -538,11 +642,6 @@ paths:
     post:
       description: Uploading user image as file by form-data "image"
       parameters:
-      - description: should contain Access Token, with the Bearer started
-        in: header
-        name: Authorization
-        required: true
-        type: string
       - description: 'User image file. The preferred size is 315x315px because the
           image will resize to 315x315px. Max size: 2MB, Allowed types: ''jpg'', ''jpeg'',
           ''png'', ''gif'''
@@ -567,6 +666,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
       summary: Upload user image
       tags:
       - user
@@ -593,4 +694,10 @@ paths:
       summary: Chat [WebSocket]
       tags:
       - chat
+securityDefinitions:
+  BearerAuth:
+    description: Should contain Access JWT Token, with the Bearer started
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
