@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/aerosystems/nix-junior-chat-back/internal/helpers"
+	"github.com/aerosystems/nix-junior-chat-back/internal/models"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
@@ -15,7 +16,7 @@ import (
 // @Tags search
 // @Accept  json
 // @Produce application/json
-// @Param q query string true "query string for search by username, minimum 1 characters, maximum 40 characters"
+// @Param q query string true "query string for search by username, minimum 1 character, maximum 40 characters"
 // @Param type query string false "type of search, default: 'user', available: 'user', 'friend', 'blacklist'"
 // @Param order query string false "order of search, default: 'asc', available: 'asc', 'desc'"
 // @Param limit query int false "limit of search, default: '10', available: '1-1000'"
@@ -27,6 +28,7 @@ import (
 // @Failure 500 {object} Response
 // @Router /v1/search [get]
 func (h *BaseHandler) Search(c echo.Context) error {
+	user := c.Get("user").(*models.User)
 	query := c.QueryParam("q")
 	if err := helpers.ValidateQuery(query); err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid query. "+err.Error(), err)
@@ -71,8 +73,15 @@ func (h *BaseHandler) Search(c echo.Context) error {
 		return ErrorResponse(c, http.StatusNotFound, "users not found", err)
 	}
 
-	for i := range *users {
-		(*users)[i].ModifyImage()
+	for i, item := range *users {
+		// Delete myself from search results
+		if item.ID == user.ID {
+			*users = append((*users)[:i], (*users)[i+1:]...)
+			break
+		}
+	}
+	for j := range *users {
+		(*users)[j].ModifyImage()
 	}
 	return SuccessResponse(c, http.StatusOK, "users found successfully", users)
 }
