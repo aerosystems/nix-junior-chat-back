@@ -37,9 +37,7 @@ func (h *BaseHandler) Unfollow(c echo.Context) error {
 				return ErrorResponse(c, http.StatusInternalServerError, "failed to unfollow user", err)
 			}
 
-			updatedUser, _ := h.userRepo.FindByID(user.ID)
-			updatedUser.ModifyImage()
-			return SuccessResponse(c, http.StatusOK, "successfully unfollowed user", updatedUser)
+			return SuccessResponse(c, http.StatusOK, "successfully unfollowed user", user)
 		}
 	}
 	err = fmt.Errorf("user with id %d is not followed", followedUserID)

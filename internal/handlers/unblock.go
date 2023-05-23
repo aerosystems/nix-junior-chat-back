@@ -37,9 +37,7 @@ func (h *BaseHandler) Unblock(c echo.Context) error {
 				return ErrorResponse(c, http.StatusInternalServerError, "failed to unblock user", err)
 			}
 
-			updatedUser, _ := h.userRepo.FindByID(user.ID)
-			updatedUser.ModifyImage()
-			return SuccessResponse(c, http.StatusOK, "successfully unblocked user", updatedUser)
+			return SuccessResponse(c, http.StatusOK, "successfully unblocked user", user)
 		}
 	}
 	err = fmt.Errorf("user with id %d is not blocked", blockedUserID)

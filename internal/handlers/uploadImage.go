@@ -66,9 +66,10 @@ func (h *BaseHandler) UploadImage(c echo.Context) error {
 		return ErrorResponse(c, http.StatusInternalServerError, "error searching image", err)
 	}
 	oldImageName := user.Image
-	user.Image = uuid.New().String() + ".png"
+	image := uuid.New().String() + ".png"
+	user.Image = os.Getenv("URL_PREFIX_IMAGES") + image
 
-	dst, err := os.Create(path + user.Image)
+	dst, err := os.Create(path + image)
 	if err != nil {
 		return ErrorResponse(c, http.StatusInternalServerError, "error handling image", err)
 	}

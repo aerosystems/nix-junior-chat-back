@@ -8,8 +8,9 @@ import (
 )
 
 type BaseHandler struct {
-	userRepo   models.UserRepository
-	tokensRepo models.TokensRepository
+	userRepo    models.UserRepository
+	tokensRepo  models.TokensRepository
+	messageRepo models.MessageRepository
 }
 
 // Response is the type used for sending JSON around
@@ -22,10 +23,12 @@ type Response struct {
 func NewBaseHandler(
 	userRepo models.UserRepository,
 	tokensRepo models.TokensRepository,
+	messageRepo models.MessageRepository,
 ) *BaseHandler {
 	return &BaseHandler{
-		userRepo:   userRepo,
-		tokensRepo: tokensRepo,
+		userRepo:    userRepo,
+		tokensRepo:  tokensRepo,
+		messageRepo: messageRepo,
 	}
 }
 

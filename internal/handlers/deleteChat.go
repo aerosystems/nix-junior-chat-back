@@ -37,9 +37,7 @@ func (h *BaseHandler) DeleteChat(c echo.Context) error {
 				return ErrorResponse(c, http.StatusInternalServerError, "failed to delete chat with user", err)
 			}
 
-			updatedUser, _ := h.userRepo.FindByID(user.ID)
-			updatedUser.ModifyImage()
-			return SuccessResponse(c, http.StatusOK, "successfully deleted chat with user", updatedUser)
+			return SuccessResponse(c, http.StatusOK, "successfully deleted chat with user", user)
 		}
 	}
 	err = fmt.Errorf("chat with userId %d does not exist", chatUserID)

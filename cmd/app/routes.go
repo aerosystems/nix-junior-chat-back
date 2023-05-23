@@ -35,7 +35,10 @@ func (app *Config) NewRouter() *echo.Echo {
 	e.DELETE("/v1/user/chat/:id", app.BaseHandler.DeleteChat, app.AuthUserMiddleware())
 
 	//Chat
-	e.GET("/ws/chat", app.BaseHandler.Chat, app.AuthUserMiddleware())
+	e.GET("/ws/chat", app.BaseHandler.Chat)
+
+	// Messages
+	e.GET("/v1/messages", app.BaseHandler.GetMessages, app.AuthUserMiddleware())
 
 	return e
 }

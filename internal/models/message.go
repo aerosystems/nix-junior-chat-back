@@ -6,39 +6,49 @@ import (
 )
 
 type Message struct {
+	ID          int    `json:"id" gorm:"primaryKey" example:"1"`
 	Type        string `json:"type" example:"message"` // text, error, system
 	Content     string `json:"content" example:"bla-bla-bla"`
-	SenderID    int    `json:"senderId" example:"1"`
-	RecipientID int    `json:"recipientId" example:"2"`
+	SenderID    int    `json:"senderId" gorm:"foreignKey:SenderID" example:"2"`
+	Sender      User   `json:"sender"`
+	RecipientID int    `json:"recipientId" gorm:"foreignKey:RecipientID" example:"3"`
+	Recipient   User   `json:"-"`
 	CreatedAt   int64  `json:"createdAt" example:"1620000000"`
 }
 
-func NewTextMessage(content string, senderID int, recipientID int) *Message {
+type MessageRepository interface {
+	FindByID(id int) (*Message, error)
+	FindAll() (*[]Message, error)
+	Create(message *Message) error
+	GetMessages(senderID, recipientID, from, limit int) (*[]Message, error)
+}
+
+func NewTextMessage(content string, sender User, recipientID int) *Message {
 	return &Message{
 		Type:        "text",
 		Content:     content,
-		SenderID:    senderID,
+		Sender:      sender,
 		RecipientID: recipientID,
 		CreatedAt:   time.Now().Unix(),
 	}
 }
 
-func NewErrorMessage(content string, senderID int) *Message {
+func NewErrorMessage(content string, sender User) *Message {
 	return &Message{
 		Type:        "error",
 		Content:     content,
-		SenderID:    senderID,
-		RecipientID: senderID,
+		Sender:      sender,
+		RecipientID: sender.ID,
 		CreatedAt:   time.Now().Unix(),
 	}
 }
 
-func NewSystemMessage(content string, senderID int) *Message {
+func NewSystemMessage(content string, sender User) *Message {
 	return &Message{
 		Type:        "system",
 		Content:     content,
-		SenderID:    senderID,
-		RecipientID: senderID,
+		Sender:      sender,
+		RecipientID: sender.ID,
 		CreatedAt:   time.Now().Unix(),
 	}
 }
