@@ -13,13 +13,13 @@ import (
 // @Accept  json
 // @Produce application/json
 // @Security BearerAuth
-// @Success 200 {object} Response{data=models.User}
+// @Success 200 {object} Response{data=UserResponse}
 // @Failure 401 {object} Response
 // @Failure 500 {object} Response
 // @Router /v1/user [get]
+
 func (h *BaseHandler) User(c echo.Context) error {
 	user := c.Get("user").(*models.User)
-	user.ModifyImage()
 
 	return SuccessResponse(c, http.StatusOK, "successfully found user data", user)
 }

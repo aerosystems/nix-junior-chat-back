@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/aerosystems/nix-junior-chat-back/internal/helpers"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
@@ -70,6 +71,7 @@ func (h *BaseHandler) Registration(c echo.Context) error {
 	newUser := models.User{
 		Username: requestPayload.Username,
 		Password: string(hashedPassword),
+		Image:    os.Getenv("URL_PREFIX_IMAGES") + "default.png",
 	}
 	err = h.userRepo.Create(&newUser)
 

@@ -80,8 +80,6 @@ func (h *BaseHandler) Search(c echo.Context) error {
 			break
 		}
 	}
-	for j := range *users {
-		(*users)[j].ModifyImage()
-	}
+
 	return SuccessResponse(c, http.StatusOK, "users found successfully", users)
 }
