@@ -12,27 +12,27 @@ func (app *Config) NewRouter() *echo.Echo {
 
 	e.GET("/docs/*", echoSwagger.WrapHandler)
 
+	// User
 	e.GET("/v1/user", app.BaseHandler.User, app.AuthUserMiddleware())
-
-	e.POST("/v1/user/register", app.BaseHandler.Registration)
-	e.POST("/v1/user/login", app.BaseHandler.Login)
-	e.POST("/v1/user/logout", app.BaseHandler.Logout, app.AuthTokenMiddleware())
-
 	e.PUT("/v1/user/update-password", app.BaseHandler.UpdatePassword, app.AuthUserMiddleware())
 	e.PUT("/v1/user/update-username", app.BaseHandler.UpdateUsername, app.AuthUserMiddleware())
 	e.POST("/v1/user/upload-image", app.BaseHandler.UploadImage, app.AuthUserMiddleware())
-
-	e.POST("/v1/tokens/refresh", app.BaseHandler.RefreshTokens)
-
-	// Search
-	e.GET("/v1/search", app.BaseHandler.Search, app.AuthUserMiddleware())
-
-	// Relations
 	e.POST("/v1/user/follow/:id", app.BaseHandler.Follow, app.AuthUserMiddleware())
 	e.DELETE("/v1/user/follow/:id", app.BaseHandler.Unfollow, app.AuthUserMiddleware())
 	e.POST("/v1/user/block/:id", app.BaseHandler.Block, app.AuthUserMiddleware())
 	e.DELETE("/v1/user/block/:id", app.BaseHandler.Unblock, app.AuthUserMiddleware())
 	e.DELETE("/v1/user/chat/:id", app.BaseHandler.DeleteChat, app.AuthUserMiddleware())
+
+	// Auth
+	e.POST("/v1/auth/register", app.BaseHandler.Registration)
+	e.POST("/v1/auth/login", app.BaseHandler.Login)
+	e.POST("/v1/auth/logout", app.BaseHandler.Logout, app.AuthTokenMiddleware())
+
+	// Tokens
+	e.POST("/v1/tokens/refresh", app.BaseHandler.RefreshTokens)
+
+	// Search
+	e.GET("/v1/search", app.BaseHandler.Search, app.AuthUserMiddleware())
 
 	//Chat
 	e.GET("/ws/chat", app.BaseHandler.Chat)
