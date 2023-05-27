@@ -87,6 +87,9 @@ definitions:
       image:
         example: image.png
         type: string
+      lastActive:
+        example: 1610000000
+        type: integer
       username:
         example: username
         type: string
@@ -103,13 +106,137 @@ info:
   title: 'NIX Junior: Chat App'
   version: "1.0"
 paths:
+  /v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Username should contain:
+        - lower, upper case latin letters and digits
+        - minimum 8 characters length
+        - maximum 40 characters length
+        Password should contain:
+        - minimum of one small case letter
+        - minimum of one upper case letter
+        - minimum of one digit
+        - minimum of one special character
+        - minimum 8 characters length
+        - maximum 40 characters length
+        Response contain pair JWT tokens, use /v1/tokens/refresh for updating them
+      parameters:
+      - description: raw request body
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.LoginRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handlers.TokensResponseBody'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: login user by credentials
+      tags:
+      - auth
+  /v1/auth/logout:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
+      summary: logout user
+      tags:
+      - auth
+  /v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Username should contain:
+        - lower, upper case latin letters and digits
+        - minimum 8 characters length
+        - maximum 40 characters length
+        Password should contain:
+        - minimum of one small case letter
+        - minimum of one upper case letter
+        - minimum of one digit
+        - minimum of one special character
+        - minimum 8 characters length
+        - maximum 40 characters length
+      parameters:
+      - description: raw request body
+        in: body
+        name: registration
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.RegistrationRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: registration user by credentials
+      tags:
+      - auth
   /v1/search:
     get:
       consumes:
       - application/json
       description: Search users by username with autocomplete
       parameters:
-      - description: query string for search by username, minimum 1 characters, maximum
+      - description: query string for search by username, minimum 1 character, maximum
           40 characters
         in: query
         name: q
@@ -200,7 +327,7 @@ paths:
             $ref: '#/definitions/handlers.Response'
       summary: refresh pair JWT tokens
       tags:
-      - auth
+      - tokens
   /v1/user:
     get:
       consumes:
@@ -273,7 +400,7 @@ paths:
       - BearerAuth: []
       summary: Unblock user
       tags:
-      - relationship
+      - user
     post:
       consumes:
       - application/json
@@ -306,7 +433,7 @@ paths:
       - BearerAuth: []
       summary: Block user
       tags:
-      - relationship
+      - user
   /v1/user/chat/{id}:
     delete:
       consumes:
@@ -349,7 +476,7 @@ paths:
       - BearerAuth: []
       summary: DeleteChat user
       tags:
-      - relationship
+      - user
   /v1/user/follow/{id}:
     delete:
       consumes:
@@ -392,7 +519,7 @@ paths:
       - BearerAuth: []
       summary: Unfollow user
       tags:
-      - relationship
+      - user
     post:
       consumes:
       - application/json
@@ -430,131 +557,7 @@ paths:
       - BearerAuth: []
       summary: Follow user
       tags:
-      - relationship
-  /v1/user/login:
-    post:
-      consumes:
-      - application/json
-      description: |-
-        Username should contain:
-        - lower, upper case latin letters and digits
-        - minimum 8 characters length
-        - maximum 40 characters length
-        Password should contain:
-        - minimum of one small case letter
-        - minimum of one upper case letter
-        - minimum of one digit
-        - minimum of one special character
-        - minimum 8 characters length
-        - maximum 40 characters length
-        Response contain pair JWT tokens, use /v1/tokens/refresh for updating them
-      parameters:
-      - description: raw request body
-        in: body
-        name: login
-        required: true
-        schema:
-          $ref: '#/definitions/handlers.LoginRequestBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/handlers.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/handlers.TokensResponseBody'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.Response'
-      summary: login user by credentials
-      tags:
-      - auth
-  /v1/user/logout:
-    post:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.Response'
-      security:
-      - BearerAuth: []
-      summary: logout user
-      tags:
-      - auth
-  /v1/user/register:
-    post:
-      consumes:
-      - application/json
-      description: |-
-        Username should contain:
-        - lower, upper case latin letters and digits
-        - minimum 8 characters length
-        - maximum 40 characters length
-        Password should contain:
-        - minimum of one small case letter
-        - minimum of one upper case letter
-        - minimum of one digit
-        - minimum of one special character
-        - minimum 8 characters length
-        - maximum 40 characters length
-      parameters:
-      - description: raw request body
-        in: body
-        name: registration
-        required: true
-        schema:
-          $ref: '#/definitions/handlers.RegistrationRequestBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.Response'
-      summary: registration user by credentials
-      tags:
-      - auth
+      - user
   /v1/user/update-password:
     put:
       consumes:
@@ -675,9 +678,9 @@ paths:
     get:
       description: Chat with users based on WebSocket
       parameters:
-      - description: should contain Access Token, with the Bearer started
-        in: header
-        name: Authorization
+      - description: Access JWT Token
+        in: query
+        name: token
         required: true
         type: string
       - description: body should contain content and recipient_id for sending message

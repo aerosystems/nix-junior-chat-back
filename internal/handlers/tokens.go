@@ -18,7 +18,7 @@ type TokensResponseBody struct {
 
 // RefreshTokens godoc
 // @Summary refresh pair JWT tokens
-// @Tags auth
+// @Tags tokens
 // @Accept  json
 // @Produce application/json
 // @Param login body RefreshTokenRequestBody true "raw request body, should contain Refresh Token"

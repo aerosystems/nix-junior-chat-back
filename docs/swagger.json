@@ -16,6 +16,167 @@
     "host": "localhost:80",
     "basePath": "/",
     "paths": {
+        "/v1/auth/login": {
+            "post": {
+                "description": "Username should contain:\n- lower, upper case latin letters and digits\n- minimum 8 characters length\n- maximum 40 characters length\nPassword should contain:\n- minimum of one small case letter\n- minimum of one upper case letter\n- minimum of one digit\n- minimum of one special character\n- minimum 8 characters length\n- maximum 40 characters length\nResponse contain pair JWT tokens, use /v1/tokens/refresh for updating them",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "login user by credentials",
+                "parameters": [
+                    {
+                        "description": "raw request body",
+                        "name": "login",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.LoginRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handlers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handlers.TokensResponseBody"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/logout": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "logout user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/register": {
+            "post": {
+                "description": "Username should contain:\n- lower, upper case latin letters and digits\n- minimum 8 characters length\n- maximum 40 characters length\nPassword should contain:\n- minimum of one small case letter\n- minimum of one upper case letter\n- minimum of one digit\n- minimum of one special character\n- minimum 8 characters length\n- maximum 40 characters length",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "registration user by credentials",
+                "parameters": [
+                    {
+                        "description": "raw request body",
+                        "name": "registration",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.RegistrationRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/search": {
             "get": {
                 "security": [
@@ -37,7 +198,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "query string for search by username, minimum 1 characters, maximum 40 characters",
+                        "description": "query string for search by username, minimum 1 character, maximum 40 characters",
                         "name": "q",
                         "in": "query",
                         "required": true
@@ -119,7 +280,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "tokens"
                 ],
                 "summary": "refresh pair JWT tokens",
                 "parameters": [
@@ -239,7 +400,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "relationship"
+                    "user"
                 ],
                 "summary": "Block user",
                 "parameters": [
@@ -291,7 +452,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "relationship"
+                    "user"
                 ],
                 "summary": "Unblock user",
                 "parameters": [
@@ -363,7 +524,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "relationship"
+                    "user"
                 ],
                 "summary": "DeleteChat user",
                 "parameters": [
@@ -435,7 +596,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "relationship"
+                    "user"
                 ],
                 "summary": "Follow user",
                 "parameters": [
@@ -499,7 +660,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "relationship"
+                    "user"
                 ],
                 "summary": "Unfollow user",
                 "parameters": [
@@ -538,167 +699,6 @@
                     },
                     "401": {
                         "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/user/login": {
-            "post": {
-                "description": "Username should contain:\n- lower, upper case latin letters and digits\n- minimum 8 characters length\n- maximum 40 characters length\nPassword should contain:\n- minimum of one small case letter\n- minimum of one upper case letter\n- minimum of one digit\n- minimum of one special character\n- minimum 8 characters length\n- maximum 40 characters length\nResponse contain pair JWT tokens, use /v1/tokens/refresh for updating them",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "login user by credentials",
-                "parameters": [
-                    {
-                        "description": "raw request body",
-                        "name": "login",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/handlers.LoginRequestBody"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/handlers.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/handlers.TokensResponseBody"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/user/logout": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "logout user",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/user/register": {
-            "post": {
-                "description": "Username should contain:\n- lower, upper case latin letters and digits\n- minimum 8 characters length\n- maximum 40 characters length\nPassword should contain:\n- minimum of one small case letter\n- minimum of one upper case letter\n- minimum of one digit\n- minimum of one special character\n- minimum 8 characters length\n- maximum 40 characters length",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "registration user by credentials",
-                "parameters": [
-                    {
-                        "description": "raw request body",
-                        "name": "registration",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/handlers.RegistrationRequestBody"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/handlers.Response"
                         }
@@ -891,9 +891,9 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "should contain Access Token, with the Bearer started",
-                        "name": "Authorization",
-                        "in": "header",
+                        "description": "Access JWT Token",
+                        "name": "token",
+                        "in": "query",
                         "required": true
                     },
                     {
@@ -1043,6 +1043,10 @@
                 "image": {
                     "type": "string",
                     "example": "image.png"
+                },
+                "lastActive": {
+                    "type": "integer",
+                    "example": 1610000000
                 },
                 "username": {
                     "type": "string",

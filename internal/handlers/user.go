@@ -31,7 +31,7 @@ type UpdatePasswordRequestBody struct {
 // @Accept  json
 // @Produce application/json
 // @Security BearerAuth
-// @Success 200 {object} Response{data=UserResponse}
+// @Success 200 {object} Response{data=models.User}
 // @Failure 401 {object} Response
 // @Failure 500 {object} Response
 // @Router /v1/user [get]
@@ -43,7 +43,7 @@ func (h *BaseHandler) User(c echo.Context) error {
 
 // Block godoc
 // @Summary Block user
-// @Tags relationship
+// @Tags user
 // @Accept  json
 // @Produce application/json
 // @Param	id	path	int	true	"Blocked User ID"
@@ -90,7 +90,7 @@ func (h *BaseHandler) Block(c echo.Context) error {
 
 // DeleteChat godoc
 // @Summary DeleteChat user
-// @Tags relationship
+// @Tags user
 // @Accept  json
 // @Produce application/json
 // @Param	id	path	int	true	"Chat User ID"
@@ -319,7 +319,7 @@ func (h *BaseHandler) UpdatePassword(c echo.Context) error {
 
 // Unfollow godoc
 // @Summary Unfollow user
-// @Tags relationship
+// @Tags user
 // @Accept  json
 // @Produce application/json
 // @Param	id	path	int	true	"Followed User ID"
@@ -355,7 +355,7 @@ func (h *BaseHandler) Unfollow(c echo.Context) error {
 
 // Unblock godoc
 // @Summary Unblock user
-// @Tags relationship
+// @Tags user
 // @Accept  json
 // @Produce application/json
 // @Param	id	path	int	true	"Unblocked User ID"
@@ -391,7 +391,7 @@ func (h *BaseHandler) Unblock(c echo.Context) error {
 
 // Follow godoc
 // @Summary Follow user
-// @Tags relationship
+// @Tags user
 // @Accept  json
 // @Produce application/json
 // @Param	id	path	int	true	"Followed User ID"
