@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
-	"github.com/aerosystems/nix-junior-chat-back/pkg/myredis"
+	"github.com/aerosystems/nix-junior-chat-back/pkg/redisclient"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -34,7 +34,7 @@ var upgrader = websocket.Upgrader{
 // @Failure 401 {object} Response
 // @Router /ws/chat [get]
 func (h *BaseHandler) Chat(c echo.Context) error {
-	clientREDIS := myredis.NewClient()
+	clientREDIS := redisclient.NewClient()
 	token := c.QueryParam("token")
 	accessTokenClaims, err := h.tokensRepo.DecodeAccessToken(token)
 	if err != nil {

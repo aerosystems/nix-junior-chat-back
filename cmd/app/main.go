@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/aerosystems/nix-junior-chat-back/pkg/gormclient"
 	"github.com/labstack/gommon/log"
 
 	"github.com/aerosystems/nix-junior-chat-back/internal/handlers"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
 	"github.com/aerosystems/nix-junior-chat-back/internal/storage"
-	"github.com/aerosystems/nix-junior-chat-back/pkg/myredis"
-	"github.com/aerosystems/nix-junior-chat-back/pkg/mysql/mygorm"
+	"github.com/aerosystems/nix-junior-chat-back/pkg/redisclient"
 )
 
 const webPort = 80
@@ -37,9 +37,9 @@ type Config struct {
 // @host localhost:80
 // @BasePath /
 func main() {
-	clientGORM := mygorm.NewClient()
+	clientGORM := gormclient.NewClient()
 	clientGORM.AutoMigrate(models.User{}, models.Message{})
-	clientREDIS := myredis.NewClient()
+	clientREDIS := redisclient.NewClient()
 	userRepo := storage.NewUserRepo(clientGORM, clientREDIS)
 	tokensRepo := storage.NewTokensRepo(clientREDIS)
 	messageRepo := storage.NewMessageRepo(clientGORM)

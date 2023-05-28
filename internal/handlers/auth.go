@@ -4,11 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
+	"github.com/aerosystems/nix-junior-chat-back/pkg/validators"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"os"
 
-	"github.com/aerosystems/nix-junior-chat-back/internal/helpers"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
@@ -52,11 +52,11 @@ func (h *BaseHandler) Registration(c echo.Context) error {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid request body", err)
 	}
 
-	if err := helpers.ValidateUsername(requestPayload.Username); err != nil {
+	if err := validators.ValidateUsername(requestPayload.Username); err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid username", err)
 	}
 
-	err := helpers.ValidatePassword(requestPayload.Password)
+	err := validators.ValidatePassword(requestPayload.Password)
 	if err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid password", err)
 	}
@@ -121,11 +121,11 @@ func (h *BaseHandler) Login(c echo.Context) error {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid request body", err)
 	}
 
-	if err := helpers.ValidateUsername(requestPayload.Username); err != nil {
+	if err := validators.ValidateUsername(requestPayload.Username); err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid username", err)
 	}
 
-	if err := helpers.ValidatePassword(requestPayload.Password); err != nil {
+	if err := validators.ValidatePassword(requestPayload.Password); err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid password", err)
 	}
 

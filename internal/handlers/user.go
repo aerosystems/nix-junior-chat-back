@@ -3,8 +3,8 @@ package handlers
 import (
 	"errors"
 	"fmt"
-	"github.com/aerosystems/nix-junior-chat-back/internal/helpers"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
+	"github.com/aerosystems/nix-junior-chat-back/pkg/validators"
 	"github.com/disintegration/imaging"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -239,7 +239,7 @@ func (h *BaseHandler) UpdateUsername(c echo.Context) error {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid request body", err)
 	}
 
-	if err := helpers.ValidateUsername(requestPayload.Username); err != nil {
+	if err := validators.ValidateUsername(requestPayload.Username); err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "username is incorrect", err)
 	}
 
@@ -289,13 +289,13 @@ func (h *BaseHandler) UpdatePassword(c echo.Context) error {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid request body", err)
 	}
 
-	if err := helpers.ValidatePassword(requestPayload.OldPassword); err != nil {
+	if err := validators.ValidatePassword(requestPayload.OldPassword); err != nil {
 		prefixErr := errors.New("old password is incorrect. ")
 		err = fmt.Errorf("%w%v", prefixErr, err)
 		return ErrorResponse(c, http.StatusBadRequest, prefixErr.Error(), err)
 	}
 
-	if err := helpers.ValidatePassword(requestPayload.NewPassword); err != nil {
+	if err := validators.ValidatePassword(requestPayload.NewPassword); err != nil {
 		prefixErr := errors.New("new password is incorrect. ")
 		err = fmt.Errorf("%w%v", prefixErr, err)
 		return ErrorResponse(c, http.StatusBadRequest, prefixErr.Error(), err)

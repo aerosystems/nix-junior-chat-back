@@ -3,8 +3,8 @@ package handlers
 import (
 	"errors"
 	"fmt"
-	"github.com/aerosystems/nix-junior-chat-back/internal/helpers"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
+	"github.com/aerosystems/nix-junior-chat-back/pkg/validators"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
@@ -30,7 +30,7 @@ import (
 func (h *BaseHandler) Search(c echo.Context) error {
 	user := c.Get("user").(*models.User)
 	query := c.QueryParam("q")
-	if err := helpers.ValidateQuery(query); err != nil {
+	if err := validators.ValidateQuery(query); err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid query. "+err.Error(), err)
 	}
 
