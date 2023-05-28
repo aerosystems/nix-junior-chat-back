@@ -11,13 +11,18 @@ import (
 	"time"
 )
 
+type Client struct {
+	WS   *websocket.Conn
+	User models.User
+}
+
 type MessageResponseBody struct {
 	Content     string `json:"content" example:"bla-bla-bla"`
 	RecipientID int    `json:"recipientId" example:"1"`
 }
 
 // Storage for clients
-var clients []*models.Client
+var clients []*Client
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -36,12 +41,12 @@ var upgrader = websocket.Upgrader{
 func (h *BaseHandler) Chat(c echo.Context) error {
 	clientREDIS := redisclient.NewClient()
 	token := c.QueryParam("token")
-	accessTokenClaims, err := h.tokensRepo.DecodeAccessToken(token)
+	accessTokenClaims, err := h.tokenService.DecodeAccessToken(token)
 	if err != nil {
 		return ErrorResponse(c, 401, "invalid token", err)
 	}
 
-	_, err = h.tokensRepo.GetCacheValue(accessTokenClaims.AccessUUID)
+	_, err = h.tokenService.GetCacheValue(accessTokenClaims.AccessUUID)
 	if err != nil {
 		return ErrorResponse(c, 401, "invalid token", err)
 	}
@@ -60,7 +65,7 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 	}
 	defer ws.Close()
 
-	client := &models.Client{
+	client := &Client{
 		WS:   ws,
 		User: *sender,
 	}

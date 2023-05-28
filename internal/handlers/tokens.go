@@ -17,8 +17,8 @@ type TokensResponseBody struct {
 }
 
 // RefreshTokens godoc
-// @Summary refresh pair JWT tokens
-// @Tags tokens
+// @Summary refresh pair JWT token_service
+// @Tags token_service
 // @Accept  json
 // @Produce application/json
 // @Param login body RefreshTokenRequestBody true "raw request body, should contain Refresh Token"
@@ -40,27 +40,27 @@ func (h *BaseHandler) RefreshTokens(c echo.Context) error {
 	}
 
 	// validate & parse refresh token claims
-	refreshTokenClaims, err := h.tokensRepo.DecodeRefreshToken(requestPayload.RefreshToken)
+	refreshTokenClaims, err := h.tokenService.DecodeRefreshToken(requestPayload.RefreshToken)
 	if err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid refresh token", err)
 	}
 
-	if value, _ := h.tokensRepo.GetCacheValue(refreshTokenClaims.RefreshUUID); value == nil {
+	if value, _ := h.tokenService.GetCacheValue(refreshTokenClaims.RefreshUUID); value == nil {
 		err := fmt.Errorf("refresh token %s not found in cache", refreshTokenClaims.RefreshUUID)
 		return ErrorResponse(c, http.StatusUnauthorized, "refresh token expired", err)
 	}
 
 	// drop Refresh Token from Redis Cache
-	_ = h.tokensRepo.DropCacheKey(refreshTokenClaims.RefreshUUID)
+	_ = h.tokenService.DropCacheKey(refreshTokenClaims.RefreshUUID)
 
-	// create a pair of JWT tokens
-	ts, err := h.tokensRepo.CreateToken(refreshTokenClaims.UserID)
+	// create a pair of JWT token_service
+	ts, err := h.tokenService.CreateToken(refreshTokenClaims.UserID)
 	if err != nil {
-		return ErrorResponse(c, http.StatusInternalServerError, "error creating tokens", err)
+		return ErrorResponse(c, http.StatusInternalServerError, "error creating token_service", err)
 	}
 
 	// add refresh token UUID to cache
-	err = h.tokensRepo.CreateCacheKey(refreshTokenClaims.UserID, ts)
+	err = h.tokenService.CreateCacheKey(refreshTokenClaims.UserID, ts)
 	if err != nil {
 		return ErrorResponse(c, http.StatusInternalServerError, "error creating cache key", err)
 	}
@@ -70,5 +70,5 @@ func (h *BaseHandler) RefreshTokens(c echo.Context) error {
 		RefreshToken: ts.RefreshToken,
 	}
 
-	return SuccessResponse(c, http.StatusOK, fmt.Sprintf("tokens successfuly refreshed for User %d", refreshTokenClaims.UserID), tokens)
+	return SuccessResponse(c, http.StatusOK, fmt.Sprintf("token_service successfuly refreshed for User %d", refreshTokenClaims.UserID), tokens)
 }

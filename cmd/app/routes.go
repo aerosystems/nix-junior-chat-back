@@ -29,7 +29,7 @@ func (app *Config) NewRouter() *echo.Echo {
 	e.POST("/v1/auth/logout", app.BaseHandler.Logout, app.AuthTokenMiddleware())
 
 	// Tokens
-	e.POST("/v1/tokens/refresh", app.BaseHandler.RefreshTokens)
+	e.POST("/v1/token_service/refresh", app.BaseHandler.RefreshTokens)
 
 	// Search
 	e.GET("/v1/search", app.BaseHandler.Search, app.AuthUserMiddleware())

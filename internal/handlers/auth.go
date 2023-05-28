@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
+	TokenService "github.com/aerosystems/nix-junior-chat-back/internal/services/token_service"
 	"github.com/aerosystems/nix-junior-chat-back/pkg/validators"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
@@ -104,7 +105,7 @@ func (h *BaseHandler) Registration(c echo.Context) error {
 // @Description - minimum of one special character
 // @Description - minimum 8 characters length
 // @Description - maximum 40 characters length
-// @Description Response contain pair JWT tokens, use /v1/tokens/refresh for updating them
+// @Description Response contain pair JWT token_service, use /v1/token_service/refresh for updating them
 // @Tags auth
 // @Accept  json
 // @Produce application/json
@@ -145,15 +146,15 @@ func (h *BaseHandler) Login(c echo.Context) error {
 		return ErrorResponse(c, http.StatusUnauthorized, err.Error(), err)
 	}
 
-	// create pair JWT tokens
-	ts, err := h.tokensRepo.CreateToken(user.ID)
+	// create pair JWT token_service
+	ts, err := h.tokenService.CreateToken(user.ID)
 	if err != nil {
-		return ErrorResponse(c, http.StatusInternalServerError, "error creating tokens", err)
+		return ErrorResponse(c, http.StatusInternalServerError, "error creating token_service", err)
 	}
 
 	// add refresh token UUID to cache
-	if err = h.tokensRepo.CreateCacheKey(user.ID, ts); err != nil {
-		return ErrorResponse(c, http.StatusInternalServerError, "error creating cache tokens", err)
+	if err = h.tokenService.CreateCacheKey(user.ID, ts); err != nil {
+		return ErrorResponse(c, http.StatusInternalServerError, "error creating cache token_service", err)
 	}
 
 	tokens := TokensResponseBody{
@@ -177,13 +178,13 @@ func (h *BaseHandler) Login(c echo.Context) error {
 // @Router /v1/auth/logout [post]
 func (h *BaseHandler) Logout(c echo.Context) error {
 	// receive AccessToken Claims from context middleware
-	accessTokenClaims, ok := c.Get("user").(*models.AccessTokenClaims)
+	accessTokenClaims, ok := c.Get("user").(*TokenService.AccessTokenClaims)
 	if !ok {
 		err := errors.New("internal transport token error")
 		return ErrorResponse(c, http.StatusInternalServerError, err.Error(), err)
 	}
 
-	err := h.tokensRepo.DropCacheTokens(*accessTokenClaims)
+	err := h.tokenService.DropCacheTokens(*accessTokenClaims)
 	if err != nil {
 		return ErrorResponse(c, http.StatusInternalServerError, "error clearing cache token", err)
 	}

@@ -325,9 +325,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.Response'
-      summary: refresh pair JWT tokens
+      summary: refresh pair JWT token_service
       tags:
-      - tokens
+      - token_service
   /v1/user:
     get:
       consumes:

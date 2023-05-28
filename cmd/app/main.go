@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	TokenService "github.com/aerosystems/nix-junior-chat-back/internal/services/token_service"
 	"github.com/aerosystems/nix-junior-chat-back/pkg/gormclient"
 	"github.com/labstack/gommon/log"
 
@@ -14,9 +15,9 @@ import (
 const webPort = 80
 
 type Config struct {
-	BaseHandler *handlers.BaseHandler
-	UserRepo    models.UserRepository
-	TokensRepo  models.TokensRepository
+	BaseHandler  *handlers.BaseHandler
+	UserRepo     models.UserRepository
+	TokenService *TokenService.Service
 }
 
 // @title NIX Junior: Chat App
@@ -39,19 +40,21 @@ type Config struct {
 func main() {
 	clientGORM := gormclient.NewClient()
 	clientGORM.AutoMigrate(models.User{}, models.Message{})
+
 	clientREDIS := redisclient.NewClient()
+
 	userRepo := storage.NewUserRepo(clientGORM, clientREDIS)
-	tokensRepo := storage.NewTokensRepo(clientREDIS)
 	messageRepo := storage.NewMessageRepo(clientGORM)
+	tokenService := TokenService.NewService(clientREDIS)
 
 	app := Config{
 		BaseHandler: handlers.NewBaseHandler(
 			userRepo,
-			tokensRepo,
 			messageRepo,
+			*tokenService,
 		),
-		UserRepo:   userRepo,
-		TokensRepo: tokensRepo,
+		UserRepo:     userRepo,
+		TokenService: tokenService,
 	}
 
 	e := app.NewRouter()

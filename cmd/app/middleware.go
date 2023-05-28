@@ -48,12 +48,12 @@ func (app *Config) AuthUserMiddleware() echo.MiddlewareFunc {
 
 func (app *Config) ParseToken(c echo.Context, auth string) (interface{}, error) {
 	_ = c
-	accessTokenClaims, err := app.TokensRepo.DecodeAccessToken(auth)
+	accessTokenClaims, err := app.TokenService.DecodeAccessToken(auth)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = app.TokensRepo.GetCacheValue(accessTokenClaims.AccessUUID)
+	_, err = app.TokenService.GetCacheValue(accessTokenClaims.AccessUUID)
 	if err != nil {
 		return nil, err
 	}
@@ -63,12 +63,12 @@ func (app *Config) ParseToken(c echo.Context, auth string) (interface{}, error) 
 
 func (app *Config) GetUser(c echo.Context, auth string) (interface{}, error) {
 	_ = c
-	accessTokenClaims, err := app.TokensRepo.DecodeAccessToken(auth)
+	accessTokenClaims, err := app.TokenService.DecodeAccessToken(auth)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = app.TokensRepo.GetCacheValue(accessTokenClaims.AccessUUID)
+	_, err = app.TokenService.GetCacheValue(accessTokenClaims.AccessUUID)
 	if err != nil {
 		return nil, err
 	}
