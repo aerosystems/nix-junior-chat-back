@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
+	MessageService "github.com/aerosystems/nix-junior-chat-back/internal/services/message_service"
 	"github.com/aerosystems/nix-junior-chat-back/pkg/redisclient"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
@@ -94,23 +95,35 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 		for _, client := range clients {
 			var responseMessage MessageResponseBody
 			if err := json.Unmarshal(msg, &responseMessage); err != nil {
-				reply := models.NewErrorMessage("invalid message format", *sender)
-				client.WS.WriteMessage(websocket.TextMessage, reply.Json())
+				reply := MessageService.NewErrorMessage("invalid message format", *sender)
+				if jsonReply, err := json.Marshal(reply); err != nil {
+					c.Logger().Error(err)
+				} else {
+					client.WS.WriteMessage(websocket.TextMessage, jsonReply)
+				}
 				c.Logger().Error(err)
 				continue
 			}
 
 			recipient, err := h.userRepo.FindByID(responseMessage.RecipientID)
 			if err != nil {
-				reply := models.NewErrorMessage("invalid recipient id", *sender)
-				client.WS.WriteMessage(websocket.TextMessage, reply.Json())
+				reply := MessageService.NewErrorMessage("invalid recipient id", *sender)
+				if jsonReply, err := json.Marshal(reply); err != nil {
+					c.Logger().Error(err)
+				} else {
+					client.WS.WriteMessage(websocket.TextMessage, jsonReply)
+				}
 				c.Logger().Error(err)
 				continue
 			}
-			message := models.NewTextMessage(responseMessage.Content, *sender, responseMessage.RecipientID)
+			message := MessageService.NewTextMessage(responseMessage.Content, *sender, responseMessage.RecipientID)
 
 			if client.User.ID == message.RecipientID {
-				client.WS.WriteMessage(websocket.TextMessage, message.Json())
+				if jsonMessage, err := json.Marshal(message); err != nil {
+					c.Logger().Error(err)
+				} else {
+					client.WS.WriteMessage(websocket.TextMessage, jsonMessage)
+				}
 				h.messageRepo.Create(message)
 				// Adding chat to sender
 				status := false

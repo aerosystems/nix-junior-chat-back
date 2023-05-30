@@ -1,10 +1,5 @@
 package models
 
-import (
-	"encoding/json"
-	"time"
-)
-
 type Message struct {
 	ID          int    `json:"id" gorm:"primaryKey" example:"1"`
 	Type        string `json:"type" example:"message"` // text, error, system
@@ -21,39 +16,4 @@ type MessageRepository interface {
 	FindAll() (*[]Message, error)
 	Create(message *Message) error
 	GetMessages(senderID, recipientID, from, limit int) (*[]Message, error)
-}
-
-func NewTextMessage(content string, sender User, recipientID int) *Message {
-	return &Message{
-		Type:        "text",
-		Content:     content,
-		Sender:      sender,
-		RecipientID: recipientID,
-		CreatedAt:   time.Now().Unix(),
-	}
-}
-
-func NewErrorMessage(content string, sender User) *Message {
-	return &Message{
-		Type:        "error",
-		Content:     content,
-		Sender:      sender,
-		RecipientID: sender.ID,
-		CreatedAt:   time.Now().Unix(),
-	}
-}
-
-func NewSystemMessage(content string, sender User) *Message {
-	return &Message{
-		Type:        "system",
-		Content:     content,
-		Sender:      sender,
-		RecipientID: sender.ID,
-		CreatedAt:   time.Now().Unix(),
-	}
-}
-
-func (m *Message) Json() []byte {
-	result, _ := json.Marshal(m)
-	return result
 }
