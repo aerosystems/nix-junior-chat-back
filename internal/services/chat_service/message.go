@@ -1,4 +1,4 @@
-package MessageService
+package ChatService
 
 import (
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"

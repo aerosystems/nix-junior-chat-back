@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
-	MessageService "github.com/aerosystems/nix-junior-chat-back/internal/services/message_service"
+	ChatService "github.com/aerosystems/nix-junior-chat-back/internal/services/chat_service"
 	"github.com/aerosystems/nix-junior-chat-back/pkg/redisclient"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
@@ -95,7 +95,7 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 		for _, client := range clients {
 			var responseMessage MessageResponseBody
 			if err := json.Unmarshal(msg, &responseMessage); err != nil {
-				reply := MessageService.NewErrorMessage("invalid message format", *sender)
+				reply := ChatService.NewErrorMessage("invalid message format", *sender)
 				if jsonReply, err := json.Marshal(reply); err != nil {
 					c.Logger().Error(err)
 				} else {
@@ -107,7 +107,7 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 
 			recipient, err := h.userRepo.FindByID(responseMessage.RecipientID)
 			if err != nil {
-				reply := MessageService.NewErrorMessage("invalid recipient id", *sender)
+				reply := ChatService.NewErrorMessage("invalid recipient id", *sender)
 				if jsonReply, err := json.Marshal(reply); err != nil {
 					c.Logger().Error(err)
 				} else {
@@ -116,7 +116,7 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 				c.Logger().Error(err)
 				continue
 			}
-			message := MessageService.NewTextMessage(responseMessage.Content, *sender, responseMessage.RecipientID)
+			message := ChatService.NewTextMessage(responseMessage.Content, *sender, responseMessage.RecipientID)
 
 			if client.User.ID == message.RecipientID {
 				if jsonMessage, err := json.Marshal(message); err != nil {
