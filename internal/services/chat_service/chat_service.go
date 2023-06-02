@@ -2,20 +2,12 @@ package ChatService
 
 import (
 	"fmt"
+	"github.com/aerosystems/nix-junior-chat-back/internal/models"
 	"github.com/go-redis/redis/v7"
 	"github.com/gorilla/websocket"
-	"net/http"
 )
 
-var upgrader websocket.Upgrader
-
 var connectedClients = make(map[string]*Client)
-
-func H(rdb *redis.Client, fn func(http.ResponseWriter, *http.Request, *redis.Client)) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		fn(w, r, rdb)
-	}
-}
 
 type msg struct {
 	Content string `json:"content,omitempty"`
@@ -30,61 +22,29 @@ const (
 	commandChat
 )
 
-func ChatWebSocketHandler(w http.ResponseWriter, r *http.Request, rdb *redis.Client) {
+func OnConnect(user *models.User, conn *websocket.Conn, rdb *redis.Client) error {
+	fmt.Println("connected from:", conn.RemoteAddr(), "client:", user.Username, "id:", user.ID)
 
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		handleWSError(err, conn)
-		return
-	}
-
-	err = onConnect(r, conn, rdb)
-	if err != nil {
-		handleWSError(err, conn)
-		return
-	}
-
-	closeCh := onDisconnect(r, conn, rdb)
-
-	onChannelMessage(conn, r)
-
-loop:
-	for {
-		select {
-		case <-closeCh:
-			break loop
-		default:
-			onClientMessage(conn, r, rdb)
-		}
-	}
-}
-
-func onConnect(r *http.Request, conn *websocket.Conn, rdb *redis.Client) error {
-	clientname := r.URL.Query()["clientname"][0]
-	fmt.Println("connected from:", conn.RemoteAddr(), "client:", clientname)
-
-	u, err := Connect(rdb, clientname)
+	u, err := Connect(rdb, user.ID)
 	if err != nil {
 		return err
 	}
-	connectedClients[clientname] = u
+	connectedClients[user.ID] = u
 	return nil
 }
 
-func onDisconnect(r *http.Request, conn *websocket.Conn, rdb *redis.Client) chan struct{} {
+func OnDisconnect(user *models.User, conn *websocket.Conn) chan struct{} {
 
 	closeCh := make(chan struct{})
 
-	clientname := r.URL.Query()["clientname"][0]
-
 	conn.SetCloseHandler(func(code int, text string) error {
-		fmt.Println("connection closed for client", clientname)
+		fmt.Println("connection closed for client", user.Username, "id:", user.ID)
 
-		u := connectedClients[clientname]
+		u := connectedClients[user.ID]
 		if err := u.Disconnect(); err != nil {
 			return err
 		}
-		delete(connectedClients, clientname)
+		delete(connectedClients, user.ID)
 		close(closeCh)
 		return nil
 	})
@@ -92,41 +52,41 @@ func onDisconnect(r *http.Request, conn *websocket.Conn, rdb *redis.Client) chan
 	return closeCh
 }
 
-func onClientMessage(conn *websocket.Conn, r *http.Request, rdb *redis.Client) {
+func OnClientMessage(conn *websocket.Conn, user *models.User, rdb *redis.Client) {
 
 	var msg msg
 
+	fmt.Println("message from:", conn.RemoteAddr(), "client:", user.Username, "id:", user.ID)
+
 	if err := conn.ReadJSON(&msg); err != nil {
-		handleWSError(err, conn)
+		HandleWSError(err, conn)
 		return
 	}
 
-	clientname := r.URL.Query()["clientname"][0]
-	u := connectedClients[clientname]
+	u := connectedClients[user.ID]
 
 	switch msg.Command {
 	case commandSubscribe:
 		if err := u.Subscribe(rdb, msg.Channel); err != nil {
-			handleWSError(err, conn)
+			HandleWSError(err, conn)
 		}
 	case commandUnsubscribe:
 		if err := u.Unsubscribe(rdb, msg.Channel); err != nil {
-			handleWSError(err, conn)
+			HandleWSError(err, conn)
 		}
 	case commandChat:
 		if err := Chat(rdb, msg.Channel, msg.Content); err != nil {
-			handleWSError(err, conn)
+			HandleWSError(err, conn)
 		}
 	}
 }
 
-func onChannelMessage(conn *websocket.Conn, r *http.Request) {
+func OnChannelMessage(conn *websocket.Conn, user *models.User) {
 
-	clientname := r.URL.Query()["clientname"][0]
-	u := connectedClients[clientname]
+	u := connectedClients[user.ID]
 
 	go func() {
-		for m := range u.MessageChan {
+		for m := range c.MessageChan {
 
 			msg := msg{
 				Content: m.Payload,
@@ -141,6 +101,6 @@ func onChannelMessage(conn *websocket.Conn, r *http.Request) {
 	}()
 }
 
-func handleWSError(err error, conn *websocket.Conn) {
+func HandleWSError(err error, conn *websocket.Conn) {
 	_ = conn.WriteJSON(msg{Err: err.Error()})
 }

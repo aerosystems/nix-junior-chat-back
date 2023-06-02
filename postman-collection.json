@@ -7,6 +7,103 @@
 	},
 	"item": [
 		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "/v1/auth/register",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"username1234\",\n    \"password\": \"Qwerty12#123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/v1/auth/register",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/v1/auth/login",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"username1234\",\n    \"password\": \"Qwerty12#123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/v1/auth/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/v1/user/logout",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/v1/auth/logout",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": []
+		},
+		{
+			"name": "tokens",
+			"item": []
+		},
+		{
 			"name": "/v1/user",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}
@@ -22,90 +119,6 @@
 					"path": [
 						"v1",
 						"user"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/v1/user/register",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"username\": \"username123\",\n    \"password\": \"Qwerty12#123\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{BASE_URL}}/v1/user/register",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"v1",
-						"user",
-						"register"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/v1/user/login",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"username\": \"user\",\n    \"password\": \"Qwerty12#\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{BASE_URL}}/v1/user/login",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"v1",
-						"user",
-						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/v1/user/logout",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/v1/user/logout",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"v1",
-						"user",
-						"logout"
 					]
 				}
 			},
@@ -174,7 +187,7 @@
 			"response": []
 		},
 		{
-			"name": "/v1/tokens/refresh",
+			"name": "/v1/user/upload-image",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}
 			},
@@ -182,14 +195,40 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODIxOTU1MjksInJlZnJlc2hVdWlkIjoiYzU5NTk4NmMtOTdmYi00MzE1LTk0ZTUtMTQ2MWI1YWEyN2UzIiwidXNlcklkIjo1fQ.aVXullZN3bRvhv0qBGrvicvpYDyoXQQFDCvWu9RcCpI\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/Users/art_k0st/Desktop/Screenshot 2023-04-18 at 00.55.18.png"
 						}
-					}
+					]
 				},
+				"url": {
+					"raw": "{{BASE_URL}}/v1/user/upload-image",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"user",
+						"upload-image"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/tokens/refresh",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
 				"url": {
 					"raw": "{{BASE_URL}}/v1/tokens/refresh",
 					"host": [
@@ -213,7 +252,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{BASE_URL}}/v1/search?q=user&type=user&order=desc&limit=1",
+					"raw": "{{BASE_URL}}/v1/search?q=u",
 					"host": [
 						"{{BASE_URL}}"
 					],
@@ -223,20 +262,23 @@
 					],
 					"query": [
 						{
-							"key": "q",
-							"value": "user"
-						},
-						{
 							"key": "type",
-							"value": "user"
+							"value": "user",
+							"disabled": true
 						},
 						{
 							"key": "order",
-							"value": "desc"
+							"value": "desc",
+							"disabled": true
 						},
 						{
 							"key": "limit",
-							"value": "1"
+							"value": "10",
+							"disabled": true
+						},
+						{
+							"key": "q",
+							"value": "u"
 						}
 					]
 				}
@@ -244,60 +286,150 @@
 			"response": []
 		},
 		{
-			"name": "/v1/follow",
+			"name": "/v1/user/follow/{id}",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}
 			},
 			"request": {
 				"method": "POST",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"userId\": 3\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
-					"raw": "{{BASE_URL}}/v1/follow",
+					"raw": "{{BASE_URL}}/v1/user/follow/2",
 					"host": [
 						"{{BASE_URL}}"
 					],
 					"path": [
 						"v1",
-						"follow"
+						"user",
+						"follow",
+						"2"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "/v1/block",
+			"name": "/v1/user/follow/{id}",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/v1/user/follow/1",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"user",
+						"follow",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/user/block/{id}",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}
 			},
 			"request": {
 				"method": "POST",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"userId\": 4\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
-					"raw": "{{BASE_URL}}/v1/block",
+					"raw": "{{BASE_URL}}/v1/user/block/1",
 					"host": [
 						"{{BASE_URL}}"
 					],
 					"path": [
 						"v1",
-						"block"
+						"user",
+						"block",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/user/block/{id}",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/v1/user/block/2",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"user",
+						"block",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/user/chat/{id}",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/v1/user/block/2",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"user",
+						"block",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/messages",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/v1/messages?limit=3&recipientId=3&from=90",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"messages"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "3"
+						},
+						{
+							"key": "recipientId",
+							"value": "3"
+						},
+						{
+							"key": "from",
+							"value": "90"
+						}
 					]
 				}
 			},

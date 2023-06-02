@@ -1,29 +1,18 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/aerosystems/nix-junior-chat-back/internal/models"
 	ChatService "github.com/aerosystems/nix-junior-chat-back/internal/services/chat_service"
 	"github.com/aerosystems/nix-junior-chat-back/pkg/redisclient"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 	"net/http"
-	"time"
 )
-
-type Client struct {
-	WS   *websocket.Conn
-	User models.User
-}
 
 type MessageResponseBody struct {
 	Content     string `json:"content" example:"bla-bla-bla"`
 	RecipientID int    `json:"recipientId" example:"1"`
 }
-
-// Storage for clients
-var clients []*Client
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -52,13 +41,12 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 		return ErrorResponse(c, 401, "invalid token", err)
 	}
 
-	sender, err := h.userRepo.FindByID(accessTokenClaims.UserID)
+	user, err := h.userRepo.FindByID(accessTokenClaims.UserID)
 	if err != nil {
 		return ErrorResponse(c, 401, "user not found", err)
 	}
 
-	c.Logger().Info(fmt.Sprintf("client %d connected", sender.ID))
-	clientREDIS.Set(fmt.Sprintf("is-online:%d", sender.ID), true, time.Minute)
+	c.Logger().Info(fmt.Sprintf("client %d connected", user.ID))
 
 	ws, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
 	if err != nil {
@@ -66,91 +54,23 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 	}
 	defer ws.Close()
 
-	client := &Client{
-		WS:   ws,
-		User: *sender,
+	if err := ChatService.OnConnect(user, ws, clientREDIS); err != nil {
+		ChatService.HandleWSError(err, ws)
 	}
 
-	clients = append(clients, client)
+	closeCh := ChatService.OnDisconnect(user, ws)
 
+	ChatService.OnChannelMessage(ws, user)
+
+loop:
 	for {
-		_, msg, err := ws.ReadMessage()
-		if err != nil {
-			for i, client := range clients {
-				if client.WS == ws {
-					clients = append(clients[:i], clients[i+1:]...)
-				}
-				c.Logger().Error(fmt.Errorf("client %d disconnected", client.User.ID))
-				clientREDIS.Del(fmt.Sprintf("is-online:%d", client.User.ID))
-				sender.LastActive = time.Now().Unix()
-				if err := h.userRepo.Update(sender); err != nil {
-					c.Logger().Error(err)
-				}
-				break
-			}
-			c.Logger().Error(err)
-			break
-		}
-
-		for _, client := range clients {
-			var responseMessage MessageResponseBody
-			if err := json.Unmarshal(msg, &responseMessage); err != nil {
-				reply := ChatService.NewErrorMessage("invalid message format", *sender)
-				if jsonReply, err := json.Marshal(reply); err != nil {
-					c.Logger().Error(err)
-				} else {
-					client.WS.WriteMessage(websocket.TextMessage, jsonReply)
-				}
-				c.Logger().Error(err)
-				continue
-			}
-
-			recipient, err := h.userRepo.FindByID(responseMessage.RecipientID)
-			if err != nil {
-				reply := ChatService.NewErrorMessage("invalid recipient id", *sender)
-				if jsonReply, err := json.Marshal(reply); err != nil {
-					c.Logger().Error(err)
-				} else {
-					client.WS.WriteMessage(websocket.TextMessage, jsonReply)
-				}
-				c.Logger().Error(err)
-				continue
-			}
-			message := ChatService.NewTextMessage(responseMessage.Content, *sender, responseMessage.RecipientID)
-
-			if client.User.ID == message.RecipientID {
-				if jsonMessage, err := json.Marshal(message); err != nil {
-					c.Logger().Error(err)
-				} else {
-					client.WS.WriteMessage(websocket.TextMessage, jsonMessage)
-				}
-				h.messageRepo.Create(message)
-				// Adding chat to sender
-				status := false
-				for _, item := range sender.Chats {
-					if item.ID == recipient.ID {
-						status = true
-						break
-					}
-				}
-				if !status {
-					sender.Chats = append(sender.Chats, recipient)
-					h.userRepo.Update(sender)
-				}
-				// Adding chat to recipient
-				status = false
-				for _, item := range recipient.Chats {
-					if item.ID == sender.ID {
-						status = true
-						break
-					}
-				}
-				if !status {
-					recipient.Chats = append(recipient.Chats, sender)
-					h.userRepo.Update(recipient)
-				}
-			}
+		select {
+		case <-closeCh:
+			break loop
+		default:
+			ChatService.OnClientMessage(ws, user, clientREDIS)
 		}
 	}
+
 	return nil
 }
