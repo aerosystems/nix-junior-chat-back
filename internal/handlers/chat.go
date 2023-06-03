@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/aerosystems/nix-junior-chat-back/internal/models"
 	ChatService "github.com/aerosystems/nix-junior-chat-back/internal/services/chat_service"
 	"github.com/aerosystems/nix-junior-chat-back/pkg/redisclient"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"strconv"
 )
 
 type MessageResponseBody struct {
@@ -73,4 +75,49 @@ loop:
 	}
 
 	return nil
+}
+
+// DeleteChat godoc
+// @Summary Delete Chat by ChatID
+// @Tags user
+// @Accept  json
+// @Produce application/json
+// @Param	chat_id	path	int	true	"Chat ID"
+// @Security BearerAuth
+// @Success 200 {object} Response{data=models.User}
+// @Failure 400 {object} Response
+// @Failure 401 {object} Response
+// @Failure 403 {object} Response
+// @Failure 404 {object} Response
+// @Failure 500 {object} Response
+// @Router /v1/chat/{chat_id} [delete]
+func (h *BaseHandler) DeleteChat(c echo.Context) error {
+	user := c.Get("user").(*models.User)
+	rawData := c.Param("chat_id")
+	chatID, err := strconv.Atoi(rawData)
+	if err != nil {
+		return ErrorResponse(c, http.StatusBadRequest, "invalid chat's userId", err)
+	}
+
+	chat, err := h.chatRepo.FindByID(chatID)
+	if err != nil {
+		return ErrorResponse(c, http.StatusNotFound, "chat not found", err)
+	}
+
+	if chat.Type != "private" {
+		return ErrorResponse(c, http.StatusForbidden, "does not have access to delete this chat", nil)
+	}
+
+	for _, item := range chat.Users {
+		if item.ID == user.ID {
+			err := h.chatRepo.Delete(chat)
+			if err != nil {
+				return ErrorResponse(c, http.StatusInternalServerError, "failed to delete chat", err)
+			}
+
+			return SuccessResponse(c, http.StatusOK, "successfully deleted chat", user)
+		}
+	}
+
+	return ErrorResponse(c, http.StatusForbidden, "does not have access to delete this chat", nil)
 }

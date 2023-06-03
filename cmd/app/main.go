@@ -39,18 +39,20 @@ type Config struct {
 // @BasePath /
 func main() {
 	clientGORM := gormclient.NewClient()
-	clientGORM.AutoMigrate(models.User{}, models.Message{})
+	clientGORM.AutoMigrate(models.User{}, models.Message{}, models.Chat{})
 
 	clientREDIS := redisclient.NewClient()
 
 	userRepo := storage.NewUserRepo(clientGORM, clientREDIS)
 	messageRepo := storage.NewMessageRepo(clientGORM)
+	chatRepo := storage.NewChatRepo(clientGORM)
 	tokenService := TokenService.NewService(clientREDIS)
 
 	app := Config{
 		BaseHandler: handlers.NewBaseHandler(
 			userRepo,
 			messageRepo,
+			chatRepo,
 			*tokenService,
 		),
 		UserRepo:     userRepo,

@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var connectedClients = make(map[string]*Client)
+var connectedClients = make(map[int]*Client)
 
 type msg struct {
 	Content string `json:"content,omitempty"`
@@ -83,7 +83,7 @@ func OnClientMessage(conn *websocket.Conn, user *models.User, rdb *redis.Client)
 
 func OnChannelMessage(conn *websocket.Conn, user *models.User) {
 
-	u := connectedClients[user.ID]
+	c := connectedClients[user.ID]
 
 	go func() {
 		for m := range c.MessageChan {

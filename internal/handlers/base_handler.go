@@ -11,6 +11,7 @@ import (
 type BaseHandler struct {
 	userRepo     models.UserRepository
 	messageRepo  models.MessageRepository
+	chatRepo     models.ChatRepository
 	tokenService TokenService.Service
 }
 
@@ -24,11 +25,13 @@ type Response struct {
 func NewBaseHandler(
 	userRepo models.UserRepository,
 	messageRepo models.MessageRepository,
+	chatRepo models.ChatRepository,
 	tokenService TokenService.Service,
 ) *BaseHandler {
 	return &BaseHandler{
 		userRepo:     userRepo,
 		messageRepo:  messageRepo,
+		chatRepo:     chatRepo,
 		tokenService: tokenService,
 	}
 }
