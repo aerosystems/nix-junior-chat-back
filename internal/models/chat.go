@@ -8,6 +8,7 @@ type Chat struct {
 
 type ChatRepository interface {
 	FindByID(id int) (*Chat, error)
+	FindByUserID(id int) (*[]Chat, error)
 	FindPrivateChatByUsersArray(users []*User) (*Chat, error)
 	Create(chat *Chat) error
 	Update(chat *Chat) error

@@ -72,9 +72,6 @@ definitions:
       id:
         example: 1
         type: integer
-      name:
-        example: chat name
-        type: string
       type:
         description: private, group
         example: private
@@ -83,6 +80,34 @@ definitions:
         items:
           $ref: '#/definitions/models.User'
         type: array
+    type: object
+  models.Message:
+    properties:
+      chatId:
+        example: 1
+        type: integer
+      content:
+        example: bla-bla-bla
+        type: string
+      createdAt:
+        example: 1620000000
+        type: integer
+      id:
+        example: 1
+        type: integer
+      sender:
+        $ref: '#/definitions/models.User'
+      senderId:
+        example: 2
+        type: integer
+      status:
+        description: sent, delivered, read
+        example: sent
+        type: string
+      type:
+        description: text, error, system
+        example: text
+        type: string
     type: object
   models.User:
     properties:
@@ -292,6 +317,47 @@ paths:
       security:
       - BearerAuth: []
       summary: Delete Chat by ChatID
+      tags:
+      - chat
+  /v1/chat/messages/{chat_id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Chat ID
+        in: path
+        name: chat_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Message'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
+      summary: Get messages from chat by ChatId
       tags:
       - chat
   /v1/search:

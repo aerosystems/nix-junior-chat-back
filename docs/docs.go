@@ -183,6 +183,75 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/chat/messages/{chat_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chat"
+                ],
+                "summary": "Get messages from chat by ChatId",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Chat ID",
+                        "name": "chat_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handlers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/models.Message"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/chat/{chat_id}": {
             "delete": {
                 "security": [
@@ -1164,10 +1233,6 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 1
                 },
-                "name": {
-                    "type": "string",
-                    "example": "chat name"
-                },
                 "type": {
                     "description": "private, group",
                     "type": "string",
@@ -1178,6 +1243,44 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.User"
                     }
+                }
+            }
+        },
+        "models.Message": {
+            "type": "object",
+            "properties": {
+                "chatId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "content": {
+                    "type": "string",
+                    "example": "bla-bla-bla"
+                },
+                "createdAt": {
+                    "type": "integer",
+                    "example": 1620000000
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "sender": {
+                    "$ref": "#/definitions/models.User"
+                },
+                "senderId": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "status": {
+                    "description": "sent, delivered, read",
+                    "type": "string",
+                    "example": "sent"
+                },
+                "type": {
+                    "description": "text, error, system",
+                    "type": "string",
+                    "example": "text"
                 }
             }
         },

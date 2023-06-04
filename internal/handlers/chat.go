@@ -64,7 +64,7 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 
 	closeCh := ChatService.OnDisconnect(user, ws)
 
-	ChatService.OnChannelMessage(ws, user)
+	ChatService.OnChannelMessage(ws, h.messageRepo, user)
 
 loop:
 	for {
@@ -72,7 +72,7 @@ loop:
 		case <-closeCh:
 			break loop
 		default:
-			ChatService.OnClientMessage(ws, user, clientREDIS)
+			ChatService.OnClientMessage(ws, clientREDIS, h.messageRepo, user)
 		}
 	}
 
@@ -96,6 +96,11 @@ func (h *BaseHandler) CreateChat(c echo.Context) error {
 	chatUserID, err := strconv.Atoi(c.Param("user_id"))
 	if err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid user id", err)
+	}
+
+	if user.ID == chatUserID {
+		err := fmt.Errorf("user can't create chat with himself")
+		return ErrorResponse(c, http.StatusBadRequest, "user can't create chat with himself", err)
 	}
 
 	chatUser, err := h.userRepo.FindByID(chatUserID)
@@ -148,6 +153,10 @@ func (h *BaseHandler) GetChat(c echo.Context) error {
 	chatUserID, err := strconv.Atoi(c.Param("user_id"))
 	if err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid user id", err)
+	}
+	if user.ID == chatUserID {
+		err := fmt.Errorf("user can't create chat with himself")
+		return ErrorResponse(c, http.StatusBadRequest, "user can't create chat with himself", err)
 	}
 
 	chatUser, err := h.userRepo.FindByID(chatUserID)
@@ -204,7 +213,7 @@ func (h *BaseHandler) DeleteChat(c echo.Context) error {
 		return ErrorResponse(c, http.StatusNotFound, "chat not found", err)
 	}
 
-	if reflect.DeepEqual(*chat, models.Chat{}) {
+	if chat == nil || reflect.DeepEqual(*chat, models.Chat{}) {
 		err := fmt.Errorf("private chat between %d not found", chatID)
 		return ErrorResponse(c, http.StatusNotFound, "chat not found", err)
 	}
@@ -224,5 +233,6 @@ func (h *BaseHandler) DeleteChat(c echo.Context) error {
 		}
 	}
 
-	return ErrorResponse(c, http.StatusForbidden, "does not have access to delete this chat", nil)
+	err = fmt.Errorf("does not have access to delete this chat")
+	return ErrorResponse(c, http.StatusForbidden, "does not have access to delete this chat", err)
 }

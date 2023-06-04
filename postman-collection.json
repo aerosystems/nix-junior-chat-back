@@ -19,7 +19,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"username1234\",\n    \"password\": \"Qwerty12#123\"\n}",
+							"raw": "{\n    \"username\": \"user\",\n    \"password\": \"Qwerty12#\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -244,7 +244,7 @@
 					"response": []
 				},
 				{
-					"name": "/v1/user/follow/{id}",
+					"name": "/v1/user/follow/{user_id}",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {}
 					},
@@ -267,7 +267,7 @@
 					"response": []
 				},
 				{
-					"name": "/v1/user/follow/{id}",
+					"name": "/v1/user/follow/{user_id}",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {}
 					},
@@ -290,7 +290,7 @@
 					"response": []
 				},
 				{
-					"name": "/v1/user/block/{id}",
+					"name": "/v1/user/block/{user_id}",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {}
 					},
@@ -313,7 +313,7 @@
 					"response": []
 				},
 				{
-					"name": "/v1/user/block/{id}",
+					"name": "/v1/user/block/{user_id}",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {}
 					},
@@ -340,6 +340,52 @@
 		{
 			"name": "chat",
 			"item": [
+				{
+					"name": "/v1/user/chat/{user_id}",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/v1/user/chat/2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"user",
+								"chat",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/v1/user/chat/{user_id}",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/v1/user/chat/2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"v1",
+								"user",
+								"chat",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "/v1/chat/{chat_id}",
 					"protocolProfileBehavior": {
@@ -371,23 +417,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/v1/chat/1/messages?limit=3&recipientId=3&from=90",
+							"raw": "{{BASE_URL}}/v1/chat/23/messages?limit=3&from=90",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"v1",
 								"chat",
-								"1",
+								"23",
 								"messages"
 							],
 							"query": [
 								{
 									"key": "limit",
-									"value": "3"
-								},
-								{
-									"key": "recipientId",
 									"value": "3"
 								},
 								{

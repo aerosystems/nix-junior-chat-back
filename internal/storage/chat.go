@@ -24,6 +24,17 @@ func (r *ChatRepo) FindByID(id int) (*models.Chat, error) {
 	return &chat, nil
 }
 
+func (r *ChatRepo) FindByUserID(id int) (*[]models.Chat, error) {
+	var chats []models.Chat
+	result := r.db.Preload("Users").Joins("JOIN chat_users ON chat_users.chat_id = chats.id").
+		Where("chat_users.user_id = ?", id).
+		Find(&chats)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &chats, nil
+}
+
 func (r *ChatRepo) FindPrivateChatByUsersArray(users []*models.User) (*models.Chat, error) {
 	var chat models.Chat
 	result := r.db.Where("type = ?", "private").

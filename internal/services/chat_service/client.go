@@ -7,8 +7,6 @@ import (
 )
 
 const (
-	// used to track clients that used chat. mainly for listing clients in the /clients api, in real world chat app
-	// such client list should be separated into client management module.
 	clientsKey  = "clients"
 	channelsKey = "channels"
 )
@@ -51,6 +49,10 @@ func (c *Client) connect(rdb *redis.Client) error {
 		return err
 	}
 	c0 = append(c0, c1...)
+
+	for _, chat := range c.User.Chats {
+		c0 = append(c0, fmt.Sprintf("%d", chat.ID))
+	}
 
 	if len(c0) == 0 {
 		fmt.Println("no channels to connect to for client: ", c.User.ID)
