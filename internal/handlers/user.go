@@ -46,16 +46,16 @@ func (h *BaseHandler) User(c echo.Context) error {
 // @Tags user
 // @Accept  json
 // @Produce application/json
-// @Param	id	path	int	true	"Blocked User ID"
+// @Param	user_id	path	int	true	"Blocked User ID"
 // @Security BearerAuth
 // @Success 200 {object} Response
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response
 // @Failure 500 {object} Response
-// @Router /v1/user/block/{id} [post]
+// @Router /v1/user/block/{user_id} [post]
 func (h *BaseHandler) Block(c echo.Context) error {
 	user := c.Get("user").(*models.User)
-	rawData := c.Param("id")
+	rawData := c.Param("user_id")
 	blockedUserID, err := strconv.Atoi(rawData)
 	if err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid blocked userId", err)
@@ -286,17 +286,17 @@ func (h *BaseHandler) UpdatePassword(c echo.Context) error {
 // @Tags user
 // @Accept  json
 // @Produce application/json
-// @Param	id	path	int	true	"Followed User ID"
+// @Param	user_id	path	int	true	"Followed User ID"
 // @Security BearerAuth
 // @Success 200 {object} Response{data=models.User}
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response
 // @Failure 404 {object} Response
 // @Failure 500 {object} Response
-// @Router /v1/user/follow/{id} [delete]
+// @Router /v1/user/follow/{user_id} [delete]
 func (h *BaseHandler) Unfollow(c echo.Context) error {
 	user := c.Get("user").(*models.User)
-	rawData := c.Param("id")
+	rawData := c.Param("user_id")
 	followedUserID, err := strconv.Atoi(rawData)
 	if err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid unfollowed userId", err)
@@ -322,17 +322,17 @@ func (h *BaseHandler) Unfollow(c echo.Context) error {
 // @Tags user
 // @Accept  json
 // @Produce application/json
-// @Param	id	path	int	true	"Unblocked User ID"
+// @Param	user_id	path	int	true	"Unblocked User ID"
 // @Security BearerAuth
 // @Success 200 {object} Response{data=models.User}
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response
 // @Failure 404 {object} Response
 // @Failure 500 {object} Response
-// @Router /v1/user/block/{id} [delete]
+// @Router /v1/user/block/{user_id} [delete]
 func (h *BaseHandler) Unblock(c echo.Context) error {
 	user := c.Get("user").(*models.User)
-	rawData := c.Param("id")
+	rawData := c.Param("user_id")
 	blockedUserID, err := strconv.Atoi(rawData)
 	if err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid unfollowed userId", err)
@@ -358,16 +358,16 @@ func (h *BaseHandler) Unblock(c echo.Context) error {
 // @Tags user
 // @Accept  json
 // @Produce application/json
-// @Param	id	path	int	true	"Followed User ID"
+// @Param	user_id	path	int	true	"Followed User ID"
 // @Security BearerAuth
 // @Success 200 {object} Response{data=models.User}
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response
 // @Failure 500 {object} Response
-// @Router /v1/user/follow/{id} [post]
+// @Router /v1/user/follow/{user_id} [post]
 func (h *BaseHandler) Follow(c echo.Context) error {
 	user := c.Get("user").(*models.User)
-	rawData := c.Param("id")
+	rawData := c.Param("user_id")
 	followedUserID, err := strconv.Atoi(rawData)
 	if err != nil {
 		return ErrorResponse(c, http.StatusBadRequest, "invalid followed userId", err)

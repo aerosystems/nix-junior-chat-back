@@ -67,6 +67,23 @@ definitions:
         example: username
         type: string
     type: object
+  models.Chat:
+    properties:
+      id:
+        example: 1
+        type: integer
+      name:
+        example: chat name
+        type: string
+      type:
+        description: private, group
+        example: private
+        type: string
+      users:
+        items:
+          $ref: '#/definitions/models.User'
+        type: array
+    type: object
   models.User:
     properties:
       blockedUsers:
@@ -75,7 +92,7 @@ definitions:
         type: array
       chats:
         items:
-          $ref: '#/definitions/models.User'
+          $ref: '#/definitions/models.Chat'
         type: array
       followedUsers:
         items:
@@ -122,7 +139,7 @@ paths:
         - minimum of one special character
         - minimum 8 characters length
         - maximum 40 characters length
-        Response contain pair JWT tokens, use /v1/tokens/refresh for updating them
+        Response contain pair JWT token_service, use /v1/token_service/refresh for updating them
       parameters:
       - description: raw request body
         in: body
@@ -230,6 +247,53 @@ paths:
       summary: registration user by credentials
       tags:
       - auth
+  /v1/chat/{chat_id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Chat ID
+        in: path
+        name: chat_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
+      summary: Delete Chat by ChatID
+      tags:
+      - chat
   /v1/search:
     get:
       consumes:
@@ -358,14 +422,14 @@ paths:
       summary: Get user data
       tags:
       - user
-  /v1/user/block/{id}:
+  /v1/user/block/{user_id}:
     delete:
       consumes:
       - application/json
       parameters:
       - description: Unblocked User ID
         in: path
-        name: id
+        name: user_id
         required: true
         type: integer
       produces:
@@ -407,7 +471,7 @@ paths:
       parameters:
       - description: Blocked User ID
         in: path
-        name: id
+        name: user_id
         required: true
         type: integer
       produces:
@@ -434,14 +498,14 @@ paths:
       summary: Block user
       tags:
       - user
-  /v1/user/chat/{id}:
-    delete:
+  /v1/user/chat/{user_id}:
+    get:
       consumes:
       - application/json
       parameters:
-      - description: Chat User ID
+      - description: User ID
         in: path
-        name: id
+        name: user_id
         required: true
         type: integer
       produces:
@@ -454,14 +518,10 @@ paths:
             - $ref: '#/definitions/handlers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.User'
+                  $ref: '#/definitions/models.Chat'
               type: object
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "401":
-          description: Unauthorized
           schema:
             $ref: '#/definitions/handlers.Response'
         "404":
@@ -474,17 +534,55 @@ paths:
             $ref: '#/definitions/handlers.Response'
       security:
       - BearerAuth: []
-      summary: DeleteChat user
+      summary: Get Chat by User ID
       tags:
-      - user
-  /v1/user/follow/{id}:
+      - chat
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Chat'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Chat by User ID
+      tags:
+      - chat
+  /v1/user/follow/{user_id}:
     delete:
       consumes:
       - application/json
       parameters:
       - description: Followed User ID
         in: path
-        name: id
+        name: user_id
         required: true
         type: integer
       produces:
@@ -526,7 +624,7 @@ paths:
       parameters:
       - description: Followed User ID
         in: path
-        name: id
+        name: user_id
         required: true
         type: integer
       produces:

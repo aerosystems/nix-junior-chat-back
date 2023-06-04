@@ -2,19 +2,19 @@ package ChatService
 
 import (
 	"fmt"
+	"github.com/aerosystems/nix-junior-chat-back/internal/models"
 	"github.com/go-redis/redis/v7"
 )
 
 const (
 	// used to track clients that used chat. mainly for listing clients in the /clients api, in real world chat app
 	// such client list should be separated into client management module.
-	clientsKey       = "clients"
-	clientChannelFmt = "client:%d:channels"
-	ChannelsKey      = "channels"
+	clientsKey  = "clients"
+	channelsKey = "channels"
 )
 
 type Client struct {
-	userID          int
+	User            *models.User
 	channelsHandler *redis.PubSub
 
 	stopListenerChan chan struct{}
@@ -24,13 +24,13 @@ type Client struct {
 }
 
 // Connect connect client to client channels on redis
-func Connect(rdb *redis.Client, userID int) (*Client, error) {
-	if _, err := rdb.SAdd(clientsKey, userID).Result(); err != nil {
+func Connect(rdb *redis.Client, user *models.User) (*Client, error) {
+	if _, err := rdb.SAdd(clientsKey, user.ID).Result(); err != nil {
 		return nil, err
 	}
 
 	c := &Client{
-		userID:           userID,
+		User:             user,
 		stopListenerChan: make(chan struct{}),
 		MessageChan:      make(chan redis.Message),
 	}
@@ -42,53 +42,18 @@ func Connect(rdb *redis.Client, userID int) (*Client, error) {
 	return c, nil
 }
 
-func (c *Client) Subscribe(rdb *redis.Client, channel string) error {
-
-	clientChannelsKey := fmt.Sprintf(clientChannelFmt, c.userID)
-
-	if rdb.SIsMember(clientChannelsKey, channel).Val() {
-		return nil
-	}
-	if err := rdb.SAdd(clientChannelsKey, channel).Err(); err != nil {
-		return err
-	}
-
-	return c.connect(rdb)
-}
-
-func (c *Client) Unsubscribe(rdb *redis.Client, channel string) error {
-
-	clientChannelsKey := fmt.Sprintf(clientChannelFmt, c.userID)
-
-	if !rdb.SIsMember(clientChannelsKey, channel).Val() {
-		return nil
-	}
-	if err := rdb.SRem(clientChannelsKey, channel).Err(); err != nil {
-		return err
-	}
-
-	return c.connect(rdb)
-}
-
 func (c *Client) connect(rdb *redis.Client) error {
 
 	var c0 []string
 
-	c1, err := rdb.SMembers(ChannelsKey).Result()
+	c1, err := rdb.SMembers(channelsKey).Result()
 	if err != nil {
 		return err
 	}
 	c0 = append(c0, c1...)
 
-	// get all client channels (from DB) and start subscribe
-	c2, err := rdb.SMembers(fmt.Sprintf(clientChannelFmt, c.userID)).Result()
-	if err != nil {
-		return err
-	}
-	c0 = append(c0, c2...)
-
 	if len(c0) == 0 {
-		fmt.Println("no channels to connect to for client: ", c.userID)
+		fmt.Println("no channels to connect to for client: ", c.User.ID)
 		return nil
 	}
 
@@ -116,7 +81,7 @@ func (c *Client) doConnect(rdb *redis.Client, channels ...string) error {
 	// The Listener
 	go func() {
 		c.listening = true
-		fmt.Println("starting the listener for client:", c.userID, "on channels:", channels)
+		fmt.Println("starting the listener for client:", c.User.ID, "on channels:", channels)
 		for {
 			select {
 			case msg, ok := <-pubSub.Channel():
@@ -126,7 +91,7 @@ func (c *Client) doConnect(rdb *redis.Client, channels ...string) error {
 				c.MessageChan <- *msg
 
 			case <-c.stopListenerChan:
-				fmt.Println("stopping the listener for client:", c.userID)
+				fmt.Println("stopping the listener for client:", c.User.ID)
 				return
 			}
 		}

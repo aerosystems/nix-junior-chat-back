@@ -5,27 +5,21 @@ import (
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
 	"github.com/go-redis/redis/v7"
 	"github.com/gorilla/websocket"
+	"strconv"
 )
 
 var connectedClients = make(map[int]*Client)
 
 type msg struct {
 	Content string `json:"content,omitempty"`
-	Channel string `json:"channel,omitempty"`
-	Command int    `json:"command,omitempty"`
+	ChatID  int    `json:"chatId,omitempty"`
 	Err     string `json:"err,omitempty"`
 }
-
-const (
-	commandSubscribe = iota
-	commandUnsubscribe
-	commandChat
-)
 
 func OnConnect(user *models.User, conn *websocket.Conn, rdb *redis.Client) error {
 	fmt.Println("connected from:", conn.RemoteAddr(), "client:", user.Username, "id:", user.ID)
 
-	u, err := Connect(rdb, user.ID)
+	u, err := Connect(rdb, user)
 	if err != nil {
 		return err
 	}
@@ -63,21 +57,10 @@ func OnClientMessage(conn *websocket.Conn, user *models.User, rdb *redis.Client)
 		return
 	}
 
-	u := connectedClients[user.ID]
+	channel := strconv.Itoa(msg.ChatID)
 
-	switch msg.Command {
-	case commandSubscribe:
-		if err := u.Subscribe(rdb, msg.Channel); err != nil {
-			HandleWSError(err, conn)
-		}
-	case commandUnsubscribe:
-		if err := u.Unsubscribe(rdb, msg.Channel); err != nil {
-			HandleWSError(err, conn)
-		}
-	case commandChat:
-		if err := Chat(rdb, msg.Channel, msg.Content); err != nil {
-			HandleWSError(err, conn)
-		}
+	if err := Chat(rdb, channel, msg.Content); err != nil {
+		HandleWSError(err, conn)
 	}
 }
 
@@ -87,10 +70,14 @@ func OnChannelMessage(conn *websocket.Conn, user *models.User) {
 
 	go func() {
 		for m := range c.MessageChan {
+			chatID, err := strconv.Atoi(m.Channel)
+			if err != nil {
+				continue
+			}
 
 			msg := msg{
 				Content: m.Payload,
-				Channel: m.Channel,
+				ChatID:  chatID,
 			}
 
 			if err := conn.WriteJSON(msg); err != nil {

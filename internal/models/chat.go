@@ -2,13 +2,13 @@ package models
 
 type Chat struct {
 	ID    int     `json:"id" gorm:"primaryKey" example:"1"`
-	Name  string  `json:"name" example:"chat name"`
 	Type  string  `json:"type" example:"private"` // private, group
 	Users []*User `json:"users,omitempty" gorm:"many2many:chat_users"`
 }
 
 type ChatRepository interface {
 	FindByID(id int) (*Chat, error)
+	FindPrivateChatByUsersArray(users []*User) (*Chat, error)
 	Create(chat *Chat) error
 	Update(chat *Chat) error
 	Delete(chat *Chat) error
