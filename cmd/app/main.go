@@ -2,21 +2,22 @@ package main
 
 import (
 	"fmt"
+	TokenService "github.com/aerosystems/nix-junior-chat-back/internal/services/token_service"
+	"github.com/aerosystems/nix-junior-chat-back/pkg/gormclient"
 	"github.com/labstack/gommon/log"
 
 	"github.com/aerosystems/nix-junior-chat-back/internal/handlers"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
 	"github.com/aerosystems/nix-junior-chat-back/internal/storage"
-	"github.com/aerosystems/nix-junior-chat-back/pkg/myredis"
-	"github.com/aerosystems/nix-junior-chat-back/pkg/mysql/mygorm"
+	"github.com/aerosystems/nix-junior-chat-back/pkg/redisclient"
 )
 
 const webPort = 80
 
 type Config struct {
-	BaseHandler *handlers.BaseHandler
-	UserRepo    models.UserRepository
-	TokensRepo  models.TokensRepository
+	BaseHandler  *handlers.BaseHandler
+	UserRepo     models.UserRepository
+	TokenService *TokenService.Service
 }
 
 // @title NIX Junior: Chat App
@@ -37,21 +38,25 @@ type Config struct {
 // @host localhost:80
 // @BasePath /
 func main() {
-	clientGORM := mygorm.NewClient()
-	clientGORM.AutoMigrate(models.User{}, models.Message{})
-	clientREDIS := myredis.NewClient()
+	clientGORM := gormclient.NewClient()
+	clientGORM.AutoMigrate(models.User{}, models.Message{}, models.Chat{})
+
+	clientREDIS := redisclient.NewClient()
+
 	userRepo := storage.NewUserRepo(clientGORM, clientREDIS)
-	tokensRepo := storage.NewTokensRepo(clientREDIS)
 	messageRepo := storage.NewMessageRepo(clientGORM)
+	chatRepo := storage.NewChatRepo(clientGORM)
+	tokenService := TokenService.NewService(clientREDIS)
 
 	app := Config{
 		BaseHandler: handlers.NewBaseHandler(
 			userRepo,
-			tokensRepo,
 			messageRepo,
+			chatRepo,
+			*tokenService,
 		),
-		UserRepo:   userRepo,
-		TokensRepo: tokensRepo,
+		UserRepo:     userRepo,
+		TokenService: tokenService,
 	}
 
 	e := app.NewRouter()

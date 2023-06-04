@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	TokenService "github.com/aerosystems/nix-junior-chat-back/internal/services/token_service"
 	"os"
 
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
@@ -8,9 +9,10 @@ import (
 )
 
 type BaseHandler struct {
-	userRepo    models.UserRepository
-	tokensRepo  models.TokensRepository
-	messageRepo models.MessageRepository
+	userRepo     models.UserRepository
+	messageRepo  models.MessageRepository
+	chatRepo     models.ChatRepository
+	tokenService TokenService.Service
 }
 
 // Response is the type used for sending JSON around
@@ -22,13 +24,15 @@ type Response struct {
 
 func NewBaseHandler(
 	userRepo models.UserRepository,
-	tokensRepo models.TokensRepository,
 	messageRepo models.MessageRepository,
+	chatRepo models.ChatRepository,
+	tokenService TokenService.Service,
 ) *BaseHandler {
 	return &BaseHandler{
-		userRepo:    userRepo,
-		tokensRepo:  tokensRepo,
-		messageRepo: messageRepo,
+		userRepo:     userRepo,
+		messageRepo:  messageRepo,
+		chatRepo:     chatRepo,
+		tokenService: tokenService,
 	}
 }
 

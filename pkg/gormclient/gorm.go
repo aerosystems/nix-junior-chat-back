@@ -1,4 +1,4 @@
-package mygorm
+package gormclient
 
 import (
 	"log"

@@ -1,4 +1,4 @@
-package helpers
+package validators
 
 import (
 	"errors"
@@ -59,13 +59,4 @@ func ValidatePassword(password string) error {
 		return errors.New("password should contain at least one special character")
 	}
 	return nil
-}
-
-func Contains(a []string, x string) bool {
-	for _, n := range a {
-		if x == n {
-			return true
-		}
-	}
-	return false
 }

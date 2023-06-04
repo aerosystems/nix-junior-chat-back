@@ -38,11 +38,18 @@ func (r *MessageRepo) Create(message *models.Message) error {
 	return nil
 }
 
-func (r *MessageRepo) GetMessages(senderID, recipientID, from, limit int) (*[]models.Message, error) {
+func (r *MessageRepo) Update(message *models.Message) error {
+	result := r.db.Save(&message)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (r *MessageRepo) GetMessages(chatID, from, limit int) (*[]models.Message, error) {
 	var messages []models.Message
 	if from == 0 {
-		result := r.db.Preload("Sender").Where("sender_id = ? AND recipient_id = ?", senderID, recipientID).
-			Or("sender_id = ? AND recipient_id = ?", recipientID, senderID).
+		result := r.db.Preload("Sender").Where("chat_id = ?", chatID).
 			Limit(limit).
 			Order("id desc").
 			Find(&messages)
@@ -50,8 +57,7 @@ func (r *MessageRepo) GetMessages(senderID, recipientID, from, limit int) (*[]mo
 			return nil, result.Error
 		}
 	} else {
-		result := r.db.Preload("Sender").Where("sender_id = ? AND recipient_id = ? AND id < ?", senderID, recipientID, from).
-			Or("sender_id = ? AND recipient_id = ? AND id < ?", recipientID, senderID, from).
+		result := r.db.Preload("Sender").Where("chat_id = ? AND id < ?", chatID, from).
 			Limit(limit).
 			Order("id desc").
 			Find(&messages)
