@@ -488,7 +488,7 @@ paths:
       summary: Get user data
       tags:
       - user
-  /v1/user/block/{user_id}:
+  /v1/user/{user_id}/block:
     delete:
       consumes:
       - application/json
@@ -564,7 +564,7 @@ paths:
       summary: Block user
       tags:
       - user
-  /v1/user/chat/{user_id}:
+  /v1/user/{user_id}/chat:
     get:
       consumes:
       - application/json
@@ -641,7 +641,7 @@ paths:
       summary: Create Chat by User ID
       tags:
       - chat
-  /v1/user/follow/{user_id}:
+  /v1/user/{user_id}/follow:
     delete:
       consumes:
       - application/json

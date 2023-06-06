@@ -90,7 +90,7 @@ loop:
 // @Failure 400 {object} Response
 // @Failure 409 {object} Response
 // @Failure 500 {object} Response
-// @Router /v1/user/chat/{user_id} [post]
+// @Router /v1/user/{user_id}/chat [post]
 func (h *BaseHandler) CreateChat(c echo.Context) error {
 	user := c.Get("user").(*models.User)
 	chatUserID, err := strconv.Atoi(c.Param("user_id"))
@@ -147,7 +147,7 @@ func (h *BaseHandler) CreateChat(c echo.Context) error {
 // @Failure 400 {object} Response
 // @Failure 404 {object} Response
 // @Failure 500 {object} Response
-// @Router /v1/user/chat/{user_id} [get]
+// @Router /v1/user/{user_id}/chat [get]
 func (h *BaseHandler) GetChat(c echo.Context) error {
 	user := c.Get("user").(*models.User)
 	chatUserID, err := strconv.Atoi(c.Param("user_id"))

@@ -41,53 +41,6 @@ func (h *BaseHandler) User(c echo.Context) error {
 	return SuccessResponse(c, http.StatusOK, "successfully found user data", user)
 }
 
-// Block godoc
-// @Summary Block user
-// @Tags user
-// @Accept  json
-// @Produce application/json
-// @Param	user_id	path	int	true	"Blocked User ID"
-// @Security BearerAuth
-// @Success 200 {object} Response
-// @Failure 400 {object} Response
-// @Failure 401 {object} Response
-// @Failure 500 {object} Response
-// @Router /v1/user/block/{user_id} [post]
-func (h *BaseHandler) Block(c echo.Context) error {
-	user := c.Get("user").(*models.User)
-	rawData := c.Param("user_id")
-	blockedUserID, err := strconv.Atoi(rawData)
-	if err != nil {
-		return ErrorResponse(c, http.StatusBadRequest, "invalid blocked userId", err)
-	}
-	blockedUser, err := h.userRepo.FindByID(blockedUserID)
-	if err != nil {
-		return ErrorResponse(c, http.StatusBadRequest, "invalid followed userId", err)
-	}
-	if blockedUser == nil {
-		err := fmt.Errorf("user with id %d not found", blockedUserID)
-		return ErrorResponse(c, http.StatusBadRequest, "invalid followed userId", err)
-	}
-	if blockedUser.ID == user.ID {
-		err := fmt.Errorf("user with id %d is the same as current user", blockedUserID)
-		return ErrorResponse(c, http.StatusBadRequest, "you can't block yourself", err)
-	}
-	for _, item := range user.BlockedUsers {
-		if item.ID == blockedUser.ID {
-			err := fmt.Errorf("user with id %d is already blocked", blockedUserID)
-			return ErrorResponse(c, http.StatusBadRequest, "user is already blocked", err)
-		}
-	}
-
-	user.BlockedUsers = append(user.BlockedUsers, blockedUser)
-
-	if err := h.userRepo.Update(user); err != nil {
-		return ErrorResponse(c, http.StatusInternalServerError, "error updating user", err)
-	}
-
-	return SuccessResponse(c, http.StatusOK, fmt.Sprintf("successfully blacklisted user %s (id: %d)", blockedUser.Username, blockedUser.ID), user)
-}
-
 // UploadImage godoc
 // @Summary Upload user image
 // @Description Uploading user image as file by form-data "image"
@@ -281,40 +234,51 @@ func (h *BaseHandler) UpdatePassword(c echo.Context) error {
 	return SuccessResponse(c, http.StatusOK, "password successfully updated", nil)
 }
 
-// Unfollow godoc
-// @Summary Unfollow user
+// Block godoc
+// @Summary Block user
 // @Tags user
 // @Accept  json
 // @Produce application/json
-// @Param	user_id	path	int	true	"Followed User ID"
+// @Param	user_id	path	int	true	"Blocked User ID"
 // @Security BearerAuth
-// @Success 200 {object} Response{data=models.User}
+// @Success 200 {object} Response
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response
-// @Failure 404 {object} Response
 // @Failure 500 {object} Response
-// @Router /v1/user/follow/{user_id} [delete]
-func (h *BaseHandler) Unfollow(c echo.Context) error {
+// @Router /v1/user/{user_id}/block [post]
+func (h *BaseHandler) Block(c echo.Context) error {
 	user := c.Get("user").(*models.User)
 	rawData := c.Param("user_id")
-	followedUserID, err := strconv.Atoi(rawData)
+	blockedUserID, err := strconv.Atoi(rawData)
 	if err != nil {
-		return ErrorResponse(c, http.StatusBadRequest, "invalid unfollowed userId", err)
+		return ErrorResponse(c, http.StatusBadRequest, "invalid blocked userId", err)
 	}
-
-	for i, item := range user.FollowedUsers {
-		if item.ID == followedUserID {
-			followedUsers := append(user.FollowedUsers[:i], user.FollowedUsers[i+1:]...)
-			err := h.userRepo.ReplaceFollowedUsers(user, followedUsers)
-			if err != nil {
-				return ErrorResponse(c, http.StatusInternalServerError, "failed to unfollow user", err)
-			}
-
-			return SuccessResponse(c, http.StatusOK, "successfully unfollowed user", user)
+	blockedUser, err := h.userRepo.FindByID(blockedUserID)
+	if err != nil {
+		return ErrorResponse(c, http.StatusBadRequest, "invalid followed userId", err)
+	}
+	if blockedUser == nil {
+		err := fmt.Errorf("user with id %d not found", blockedUserID)
+		return ErrorResponse(c, http.StatusBadRequest, "invalid followed userId", err)
+	}
+	if blockedUser.ID == user.ID {
+		err := fmt.Errorf("user with id %d is the same as current user", blockedUserID)
+		return ErrorResponse(c, http.StatusBadRequest, "you can't block yourself", err)
+	}
+	for _, item := range user.BlockedUsers {
+		if item.ID == blockedUser.ID {
+			err := fmt.Errorf("user with id %d is already blocked", blockedUserID)
+			return ErrorResponse(c, http.StatusBadRequest, "user is already blocked", err)
 		}
 	}
-	err = fmt.Errorf("user with id %d is not followed", followedUserID)
-	return ErrorResponse(c, http.StatusNotFound, "user is not followed", err)
+
+	user.BlockedUsers = append(user.BlockedUsers, blockedUser)
+
+	if err := h.userRepo.Update(user); err != nil {
+		return ErrorResponse(c, http.StatusInternalServerError, "error updating user", err)
+	}
+
+	return SuccessResponse(c, http.StatusOK, fmt.Sprintf("successfully blacklisted user %s (id: %d)", blockedUser.Username, blockedUser.ID), user)
 }
 
 // Unblock godoc
@@ -329,7 +293,7 @@ func (h *BaseHandler) Unfollow(c echo.Context) error {
 // @Failure 401 {object} Response
 // @Failure 404 {object} Response
 // @Failure 500 {object} Response
-// @Router /v1/user/block/{user_id} [delete]
+// @Router /v1/user/{user_id}/block [delete]
 func (h *BaseHandler) Unblock(c echo.Context) error {
 	user := c.Get("user").(*models.User)
 	rawData := c.Param("user_id")
@@ -364,7 +328,7 @@ func (h *BaseHandler) Unblock(c echo.Context) error {
 // @Failure 400 {object} Response
 // @Failure 401 {object} Response
 // @Failure 500 {object} Response
-// @Router /v1/user/follow/{user_id} [post]
+// @Router /v1/user/{user_id}/follow [post]
 func (h *BaseHandler) Follow(c echo.Context) error {
 	user := c.Get("user").(*models.User)
 	rawData := c.Param("user_id")
@@ -399,4 +363,40 @@ func (h *BaseHandler) Follow(c echo.Context) error {
 	}
 
 	return SuccessResponse(c, http.StatusOK, fmt.Sprintf("successfully followed user %s (id: %d)", followedUser.Username, followedUser.ID), user)
+}
+
+// Unfollow godoc
+// @Summary Unfollow user
+// @Tags user
+// @Accept  json
+// @Produce application/json
+// @Param	user_id	path	int	true	"Followed User ID"
+// @Security BearerAuth
+// @Success 200 {object} Response{data=models.User}
+// @Failure 400 {object} Response
+// @Failure 401 {object} Response
+// @Failure 404 {object} Response
+// @Failure 500 {object} Response
+// @Router /v1/user/{user_id}/follow [delete]
+func (h *BaseHandler) Unfollow(c echo.Context) error {
+	user := c.Get("user").(*models.User)
+	rawData := c.Param("user_id")
+	followedUserID, err := strconv.Atoi(rawData)
+	if err != nil {
+		return ErrorResponse(c, http.StatusBadRequest, "invalid unfollowed userId", err)
+	}
+
+	for i, item := range user.FollowedUsers {
+		if item.ID == followedUserID {
+			followedUsers := append(user.FollowedUsers[:i], user.FollowedUsers[i+1:]...)
+			err := h.userRepo.ReplaceFollowedUsers(user, followedUsers)
+			if err != nil {
+				return ErrorResponse(c, http.StatusInternalServerError, "failed to unfollow user", err)
+			}
+
+			return SuccessResponse(c, http.StatusOK, "successfully unfollowed user", user)
+		}
+	}
+	err = fmt.Errorf("user with id %d is not followed", followedUserID)
+	return ErrorResponse(c, http.StatusNotFound, "user is not followed", err)
 }
