@@ -61,6 +61,11 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 	if err := ChatService.OnConnect(user, ws, clientREDIS); err != nil {
 		ChatService.HandleWSError(err, ws)
 	}
+	user.IsOnline = true
+	fmt.Println("user.IsOnline", user.IsOnline)
+	if err := h.userRepo.Update(user); err != nil {
+		c.Logger().Error(err.Error())
+	}
 
 	closeCh := ChatService.OnDisconnect(user, ws)
 
@@ -70,6 +75,11 @@ loop:
 	for {
 		select {
 		case <-closeCh:
+			user.IsOnline = false
+			if err := h.userRepo.Update(user); err != nil {
+				c.Logger().Error(err.Error())
+			}
+			fmt.Println("user.IsOnline", user.IsOnline)
 			break loop
 		default:
 			ChatService.OnClientMessage(ws, clientREDIS, h.messageRepo, user)

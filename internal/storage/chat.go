@@ -37,7 +37,8 @@ func (r *ChatRepo) FindByUserID(id int) (*[]models.Chat, error) {
 
 func (r *ChatRepo) FindPrivateChatByUsersArray(users []*models.User) (*models.Chat, error) {
 	var chat models.Chat
-	result := r.db.Where("type = ?", "private").
+	result := r.db.Preload("Users").
+		Where("type = ?", "private").
 		Joins("JOIN chat_users ON chat_users.chat_id = chats.id").
 		Where("chat_users.user_id IN ?", getUserIDs(users)).
 		Group("chats.id").

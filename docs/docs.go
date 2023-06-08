@@ -1313,6 +1313,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "image.png"
                 },
+                "isOnline": {
+                    "type": "boolean",
+                    "example": true
+                },
                 "lastActive": {
                     "type": "integer",
                     "example": 1610000000

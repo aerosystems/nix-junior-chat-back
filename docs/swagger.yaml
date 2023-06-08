@@ -129,6 +129,9 @@ definitions:
       image:
         example: image.png
         type: string
+      isOnline:
+        example: true
+        type: boolean
       lastActive:
         example: 1610000000
         type: integer

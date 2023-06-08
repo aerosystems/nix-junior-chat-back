@@ -12,7 +12,7 @@ type User struct {
 	FollowedUsers []*User   `json:"followedUsers,omitempty" gorm:"many2many:followed_users"`
 	BlockedUsers  []*User   `json:"blockedUsers,omitempty" gorm:"many2many:blocked_users"`
 	Chats         []*Chat   `json:"chats,omitempty" gorm:"many2many:chat_users"`
-	LastActive    int64     `json:"lastActive,omitempty" example:"1610000000"`
+	IsOnline      bool      `json:"isOnline,omitempty" example:"true"`
 	CreatedAt     time.Time `json:"-"`
 	UpdatedAt     time.Time `json:"-"`
 }
