@@ -12,9 +12,9 @@ type User struct {
 	FollowedUsers []*User   `json:"followedUsers,omitempty" gorm:"many2many:followed_users"`
 	BlockedUsers  []*User   `json:"blockedUsers,omitempty" gorm:"many2many:blocked_users"`
 	Chats         []*Chat   `json:"chats,omitempty" gorm:"many2many:chat_users"`
-	IsOnline      bool      `json:"isOnline,omitempty" example:"true"`
+	IsOnline      bool      `json:"isOnline,omitempty" gorm:"default:false" example:"true"`
 	CreatedAt     time.Time `json:"-"`
-	UpdatedAt     time.Time `json:"-"`
+	UpdatedAt     time.Time `json:"updatedAt,omitempty" example:"2024-01-01T12:00:00.000Z"`
 }
 
 type UserRepository interface {

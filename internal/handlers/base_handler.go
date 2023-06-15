@@ -53,11 +53,10 @@ func ErrorResponse(c echo.Context, statusCode int, message string, err error) er
 	payload := Response{
 		Error:   true,
 		Message: message,
-		Data:    err.Error(),
 	}
 
-	if os.Getenv("APP_ENV") == "prod" {
-		payload.Data = nil
+	if os.Getenv("APP_ENV") == "dev" {
+		payload.Data = err.Error()
 	}
 
 	return c.JSON(statusCode, payload)

@@ -59,10 +59,9 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 	defer ws.Close()
 
 	if err := ChatService.OnConnect(user, ws, clientREDIS); err != nil {
-		ChatService.HandleWSError(err, ws)
+		ChatService.HandleWSError(err, "error sending message", ws)
 	}
 	user.IsOnline = true
-	fmt.Println("user.IsOnline", user.IsOnline)
 	if err := h.userRepo.Update(user); err != nil {
 		c.Logger().Error(err.Error())
 	}
@@ -79,13 +78,11 @@ loop:
 			if err := h.userRepo.Update(user); err != nil {
 				c.Logger().Error(err.Error())
 			}
-			fmt.Println("user.IsOnline", user.IsOnline)
 			break loop
 		default:
-			ChatService.OnClientMessage(ws, clientREDIS, h.messageRepo, user)
+			ChatService.OnClientMessage(ws, clientREDIS, h.messageRepo, h.chatRepo, user)
 		}
 	}
-
 	return nil
 }
 
@@ -143,7 +140,6 @@ func (h *BaseHandler) CreateChat(c echo.Context) error {
 		return ErrorResponse(c, http.StatusInternalServerError, "error while creating chat", err)
 	}
 	return SuccessResponse(c, http.StatusCreated, "chat created successfully", newChat)
-
 }
 
 // GetChat godoc

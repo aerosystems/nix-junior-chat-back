@@ -1317,9 +1317,9 @@ const docTemplate = `{
                     "type": "boolean",
                     "example": true
                 },
-                "lastActive": {
-                    "type": "integer",
-                    "example": 1610000000
+                "updatedAt": {
+                    "type": "string",
+                    "example": "2024-01-01T12:00:00.000Z"
                 },
                 "username": {
                     "type": "string",

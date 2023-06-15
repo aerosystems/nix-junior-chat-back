@@ -17,7 +17,7 @@ func NewChatRepo(db *gorm.DB) *ChatRepo {
 
 func (r *ChatRepo) FindByID(id int) (*models.Chat, error) {
 	var chat models.Chat
-	result := r.db.Preload("Users").Find(&chat, id)
+	result := r.db.Preload("Users.BlockedUsers").Find(&chat, id)
 	if result.Error != nil {
 		return nil, result.Error
 	}

@@ -6,6 +6,7 @@ import (
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
 	"github.com/go-redis/redis/v7"
 	"github.com/gorilla/websocket"
+	"os"
 	"strconv"
 	"time"
 )
@@ -15,7 +16,8 @@ var connectedClients = make(map[int]*Client)
 type msg struct {
 	Content string `json:"content,omitempty"`
 	ChatID  int    `json:"chatId,omitempty"`
-	Err     string `json:"err,omitempty"`
+	Type    string `json:"type,omitempty"` // error, system
+	Err     string `json:"error,omitempty"`
 }
 
 func OnConnect(user *models.User, conn *websocket.Conn, rdb *redis.Client) error {
@@ -48,14 +50,14 @@ func OnDisconnect(user *models.User, conn *websocket.Conn) chan struct{} {
 	return closeCh
 }
 
-func OnClientMessage(conn *websocket.Conn, rdb *redis.Client, messageRepo models.MessageRepository, user *models.User) {
+func OnClientMessage(conn *websocket.Conn, rdb *redis.Client, messageRepo models.MessageRepository, chatRepo models.ChatRepository, user *models.User) {
 
 	var msg msg
 
 	fmt.Println("message from:", conn.RemoteAddr(), "client:", user.Username, "id:", user.ID)
 
 	if err := conn.ReadJSON(&msg); err != nil {
-		HandleWSError(err, conn)
+		HandleWSError(err, "error sending message", conn)
 		return
 	}
 
@@ -70,14 +72,35 @@ func OnClientMessage(conn *websocket.Conn, rdb *redis.Client, messageRepo models
 	}
 	newMessageJSON, err := json.Marshal(newMessage)
 	if err != nil {
-		HandleWSError(err, conn)
+		HandleWSError(err, "error sending message", conn)
 		return
+	}
+
+	chat, err := chatRepo.FindByID(msg.ChatID)
+	if err != nil {
+		HandleWSError(err, "error sending message", conn)
+		return
+	}
+
+	// Handle case when user is blocked
+	if chat.Type == "private" {
+		for _, u := range chat.Users {
+			if u.ID != user.ID {
+				for _, b := range u.BlockedUsers {
+					if user.ID == b.ID {
+						err = fmt.Errorf("user %d blocks %d", u.ID, user.ID)
+						HandleWSError(err, fmt.Sprintf("User %s blocked you. You can't send message to this chat", b.Username), conn)
+						return
+					}
+				}
+			}
+		}
 	}
 
 	channel := strconv.Itoa(msg.ChatID)
 
 	if err := Chat(rdb, channel, string(newMessageJSON)); err != nil {
-		HandleWSError(err, conn)
+		HandleWSError(err, "error sending message", conn)
 	}
 
 	err = messageRepo.Create(&newMessage)
@@ -92,7 +115,7 @@ func OnChannelMessage(conn *websocket.Conn, messageRepo models.MessageRepository
 
 			var message models.Message
 			if err := json.Unmarshal([]byte(m.Payload), &message); err != nil {
-				HandleWSError(err, conn)
+				HandleWSError(err, "error sending message", conn)
 			}
 
 			if message.SenderID != user.ID {
@@ -109,6 +132,19 @@ func OnChannelMessage(conn *websocket.Conn, messageRepo models.MessageRepository
 	}()
 }
 
-func HandleWSError(err error, conn *websocket.Conn) {
-	_ = conn.WriteJSON(msg{Err: err.Error()})
+func HandleWSError(err error, message string, conn *websocket.Conn) {
+	// ErrorResponse takes a response status code and arbitrary data and writes a json response to the client in depends on Header Accept and APP_ENV environment variable(has two possible values: dev and prod)
+	// - APP_ENV=dev responds debug info level of error
+	// - APP_ENV=prod responds just message about error [DEFAULT]
+
+	payload := msg{
+		Type:    "error",
+		Content: message,
+	}
+
+	if os.Getenv("APP_ENV") == "dev" {
+		payload.Err = err.Error()
+	}
+
+	_ = conn.WriteJSON(payload)
 }

@@ -60,7 +60,8 @@ func (r *UserRepo) Create(user *models.User) error {
 }
 
 func (r *UserRepo) Update(user *models.User) error {
-	result := r.db.Session(&gorm.Session{FullSaveAssociations: true}).Save(&user)
+	//result := r.db.Session(&gorm.Session{FullSaveAssociations: true}).Save(&user)
+	result := r.db.Save(&user)
 	if result.Error != nil {
 		return result.Error
 	}
