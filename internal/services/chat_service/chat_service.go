@@ -6,6 +6,7 @@ import (
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
 	"github.com/go-redis/redis/v7"
 	"github.com/gorilla/websocket"
+	"log"
 	"os"
 	"strconv"
 	"time"
@@ -54,12 +55,12 @@ func OnClientMessage(conn *websocket.Conn, rdb *redis.Client, messageRepo models
 
 	var msg msg
 
-	fmt.Println("message from:", conn.RemoteAddr(), "client:", user.Username, "id:", user.ID)
-
 	if err := conn.ReadJSON(&msg); err != nil {
 		HandleWSError(err, "error sending message", conn)
 		return
 	}
+
+	fmt.Println("message :", msg.Content, ", client:", user.Username, "id:", user.ID)
 
 	newMessage := models.Message{
 		Type:      "text",
@@ -103,6 +104,7 @@ func OnClientMessage(conn *websocket.Conn, rdb *redis.Client, messageRepo models
 		HandleWSError(err, "error sending message", conn)
 	}
 
+	fmt.Println("message: ", newMessage, "sent to channel:", channel)
 	err = messageRepo.Create(&newMessage)
 }
 
@@ -119,13 +121,8 @@ func OnChannelMessage(conn *websocket.Conn, messageRepo models.MessageRepository
 			}
 
 			if message.SenderID != user.ID {
-				message.Status = "delivered"
-				err := messageRepo.Update(&message)
-				if err != nil {
-					fmt.Println(err)
-				}
 				if err := conn.WriteJSON(message); err != nil {
-					fmt.Println(err)
+					log.Println(err)
 				}
 			}
 		}

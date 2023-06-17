@@ -51,6 +51,10 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 	}
 
 	c.Logger().Info(fmt.Sprintf("client %d connected", user.ID))
+	user.IsOnline = true
+	if err := h.userRepo.Update(user); err != nil {
+		c.Logger().Error(err.Error())
+	}
 
 	ws, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
 	if err != nil {
@@ -60,10 +64,6 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 
 	if err := ChatService.OnConnect(user, ws, clientREDIS); err != nil {
 		ChatService.HandleWSError(err, "error sending message", ws)
-	}
-	user.IsOnline = true
-	if err := h.userRepo.Update(user); err != nil {
-		c.Logger().Error(err.Error())
 	}
 
 	closeCh := ChatService.OnDisconnect(user, ws)
@@ -83,6 +83,7 @@ loop:
 			ChatService.OnClientMessage(ws, clientREDIS, h.messageRepo, h.chatRepo, user)
 		}
 	}
+
 	return nil
 }
 

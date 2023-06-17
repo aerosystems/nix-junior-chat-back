@@ -50,7 +50,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"username1234\",\n    \"password\": \"Qwerty12#123\"\n}",
+							"raw": "{\n    \"username\": \"user\",\n    \"password\": \"Qwerty12#\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -244,7 +244,7 @@
 					"response": []
 				},
 				{
-					"name": "/v1/user/follow/{user_id}",
+					"name": "/v1/user/{user_id}/follow",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {}
 					},
@@ -252,22 +252,22 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/v1/user/follow/2",
+							"raw": "{{BASE_URL}}/v1/user/2/follow",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"v1",
 								"user",
-								"follow",
-								"2"
+								"2",
+								"follow"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/v1/user/follow/{user_id}",
+					"name": "/v1/user/{user_id}/follow",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {}
 					},
@@ -275,22 +275,22 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/v1/user/follow/1",
+							"raw": "{{BASE_URL}}/v1/user/1/follow",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"v1",
 								"user",
-								"follow",
-								"1"
+								"1",
+								"follow"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/v1/user/block/{user_id}",
+					"name": "/v1/user/{user_id}/block",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {}
 					},
@@ -298,22 +298,22 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/v1/user/block/1",
+							"raw": "{{BASE_URL}}/v1/user/1/block",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"v1",
 								"user",
-								"block",
-								"1"
+								"1",
+								"block"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/v1/user/block/{user_id}",
+					"name": "/v1/user/{user_id}/block",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {}
 					},
@@ -321,15 +321,15 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/v1/user/block/2",
+							"raw": "{{BASE_URL}}/v1/user/2/block",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"v1",
 								"user",
-								"block",
-								"2"
+								"2",
+								"block"
 							]
 						}
 					},
@@ -341,7 +341,7 @@
 			"name": "chat",
 			"item": [
 				{
-					"name": "/v1/user/chat/{user_id}",
+					"name": "/v1/user/{user_id}/chat",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {}
 					},
@@ -349,22 +349,22 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/v1/user/chat/2",
+							"raw": "{{BASE_URL}}/v1/user/2/chat",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"v1",
 								"user",
-								"chat",
-								"2"
+								"2",
+								"chat"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/v1/user/chat/{user_id}",
+					"name": "/v1/user/{user_id}/chat",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {}
 					},
@@ -372,15 +372,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/v1/user/chat/2",
+							"raw": "{{BASE_URL}}/v1/user/3/chat",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"v1",
 								"user",
-								"chat",
-								"2"
+								"3",
+								"chat"
 							]
 						}
 					},
@@ -417,14 +417,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/v1/chat/23/messages?limit=3&from=90",
+							"raw": "{{BASE_URL}}/v1/chat/47/messages?limit=3",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"v1",
 								"chat",
-								"23",
+								"47",
 								"messages"
 							],
 							"query": [
@@ -434,7 +434,8 @@
 								},
 								{
 									"key": "from",
-									"value": "90"
+									"value": "90",
+									"disabled": true
 								}
 							]
 						}

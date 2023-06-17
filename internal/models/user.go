@@ -24,6 +24,7 @@ type UserRepository interface {
 	FindArrayByPartUsername(username string, order string, limit int) (*[]User, error)
 	Create(user *User) error
 	Update(user *User) error
+	UpdateWithAssociations(user *User) error
 	Delete(user *User) error
 	ReplaceFollowedUsers(user *User, followedUsers []*User) error
 	ReplaceBlockedUsers(user *User, blockedUsers []*User) error
