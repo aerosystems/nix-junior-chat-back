@@ -18,8 +18,8 @@ rebuild:
 	docker-compose -f ./docker-compose.local.yml --env-file ./.env.local up -d
 	@echo "Docker images rebuilt!"
 
-## chat: stops chat-service, removes docker image, builds service, and starts it
-chat: build
+## bin: stops chat-service, removes docker image, builds service, and starts it
+bin: build
 	@echo "Building chat-service docker image..."
 	docker-compose -f ./docker-compose.local.yml --env-file ./.env.local stop chat-service
 	docker-compose -f ./docker-compose.local.yml --env-file ./.env.local rm -f chat-service

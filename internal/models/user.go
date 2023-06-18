@@ -12,9 +12,10 @@ type User struct {
 	FollowedUsers []*User   `json:"followedUsers,omitempty" gorm:"many2many:followed_users"`
 	BlockedUsers  []*User   `json:"blockedUsers,omitempty" gorm:"many2many:blocked_users"`
 	Chats         []*Chat   `json:"chats,omitempty" gorm:"many2many:chat_users"`
-	LastActive    int64     `json:"lastActive,omitempty" example:"1610000000"`
+	Devices       []*Device `json:"devices,omitempty"`
+	IsOnline      bool      `json:"isOnline,omitempty" gorm:"default:false" example:"true"`
 	CreatedAt     time.Time `json:"-"`
-	UpdatedAt     time.Time `json:"-"`
+	UpdatedAt     time.Time `json:"updatedAt,omitempty" example:"2024-01-01T12:00:00.000Z"`
 }
 
 type UserRepository interface {
@@ -24,6 +25,7 @@ type UserRepository interface {
 	FindArrayByPartUsername(username string, order string, limit int) (*[]User, error)
 	Create(user *User) error
 	Update(user *User) error
+	UpdateWithAssociations(user *User) error
 	Delete(user *User) error
 	ReplaceFollowedUsers(user *User, followedUsers []*User) error
 	ReplaceBlockedUsers(user *User, blockedUsers []*User) error

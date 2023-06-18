@@ -3,8 +3,6 @@ package handlers
 import (
 	"fmt"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
-	ChatService "github.com/aerosystems/nix-junior-chat-back/internal/services/chat_service"
-	"github.com/aerosystems/nix-junior-chat-back/pkg/redisclient"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -33,7 +31,6 @@ var upgrader = websocket.Upgrader{
 // @Failure 401 {object} Response
 // @Router /ws/chat [get]
 func (h *BaseHandler) Chat(c echo.Context) error {
-	clientREDIS := redisclient.NewClient()
 	token := c.QueryParam("token")
 	accessTokenClaims, err := h.tokenService.DecodeAccessToken(token)
 	if err != nil {
@@ -51,6 +48,10 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 	}
 
 	c.Logger().Info(fmt.Sprintf("client %d connected", user.ID))
+	user.IsOnline = true
+	if err := h.userRepo.Update(user); err != nil {
+		c.Logger().Error(err.Error())
+	}
 
 	ws, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
 	if err != nil {
@@ -58,24 +59,27 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 	}
 	defer ws.Close()
 
-	if err := ChatService.OnConnect(user, ws, clientREDIS); err != nil {
-		ChatService.HandleWSError(err, ws)
+	if err := h.chatService.OnConnect(ws, user); err != nil {
+		h.chatService.HandleWSError(err, "error sending message", ws)
 	}
 
-	closeCh := ChatService.OnDisconnect(user, ws)
+	closeCh := h.chatService.OnDisconnect(ws, user)
 
-	ChatService.OnChannelMessage(ws, h.messageRepo, user)
+	h.chatService.OnChannelMessage(ws, user)
 
 loop:
 	for {
 		select {
 		case <-closeCh:
+			user.IsOnline = false
+			if err := h.userRepo.Update(user); err != nil {
+				c.Logger().Error(err.Error())
+			}
 			break loop
 		default:
-			ChatService.OnClientMessage(ws, clientREDIS, h.messageRepo, user)
+			h.chatService.OnClientMessage(ws, user)
 		}
 	}
-
 	return nil
 }
 
@@ -90,7 +94,7 @@ loop:
 // @Failure 400 {object} Response
 // @Failure 409 {object} Response
 // @Failure 500 {object} Response
-// @Router /v1/user/chat/{user_id} [post]
+// @Router /v1/user/{user_id}/chat [post]
 func (h *BaseHandler) CreateChat(c echo.Context) error {
 	user := c.Get("user").(*models.User)
 	chatUserID, err := strconv.Atoi(c.Param("user_id"))
@@ -133,7 +137,6 @@ func (h *BaseHandler) CreateChat(c echo.Context) error {
 		return ErrorResponse(c, http.StatusInternalServerError, "error while creating chat", err)
 	}
 	return SuccessResponse(c, http.StatusCreated, "chat created successfully", newChat)
-
 }
 
 // GetChat godoc
@@ -147,7 +150,7 @@ func (h *BaseHandler) CreateChat(c echo.Context) error {
 // @Failure 400 {object} Response
 // @Failure 404 {object} Response
 // @Failure 500 {object} Response
-// @Router /v1/user/chat/{user_id} [get]
+// @Router /v1/user/{user_id}/chat [get]
 func (h *BaseHandler) GetChat(c echo.Context) error {
 	user := c.Get("user").(*models.User)
 	chatUserID, err := strconv.Atoi(c.Param("user_id"))

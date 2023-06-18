@@ -29,7 +29,7 @@ func (r *UserRepo) FindAll() (*[]models.User, error) {
 
 func (r *UserRepo) FindByID(id int) (*models.User, error) {
 	var user models.User
-	result := r.db.Preload("FollowedUsers").Preload("BlockedUsers").Preload("Chats").Find(&user, id)
+	result := r.db.Preload("FollowedUsers").Preload("BlockedUsers").Preload("Chats.Users").Preload("Devices").Find(&user, id)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -60,6 +60,14 @@ func (r *UserRepo) Create(user *models.User) error {
 }
 
 func (r *UserRepo) Update(user *models.User) error {
+	result := r.db.Save(&user)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (r *UserRepo) UpdateWithAssociations(user *models.User) error {
 	result := r.db.Session(&gorm.Session{FullSaveAssociations: true}).Save(&user)
 	if result.Error != nil {
 		return result.Error

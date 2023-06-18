@@ -2,14 +2,16 @@ package main
 
 import (
 	"fmt"
+	ChatService "github.com/aerosystems/nix-junior-chat-back/internal/services/chat_service"
 	TokenService "github.com/aerosystems/nix-junior-chat-back/internal/services/token_service"
-	"github.com/aerosystems/nix-junior-chat-back/pkg/gormclient"
+	FirebaseClient "github.com/aerosystems/nix-junior-chat-back/pkg/firebase_client"
+	"github.com/aerosystems/nix-junior-chat-back/pkg/gorm_client"
 	"github.com/labstack/gommon/log"
 
 	"github.com/aerosystems/nix-junior-chat-back/internal/handlers"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
 	"github.com/aerosystems/nix-junior-chat-back/internal/storage"
-	"github.com/aerosystems/nix-junior-chat-back/pkg/redisclient"
+	"github.com/aerosystems/nix-junior-chat-back/pkg/redis_client"
 )
 
 const webPort = 80
@@ -38,23 +40,24 @@ type Config struct {
 // @host localhost:80
 // @BasePath /
 func main() {
-	clientGORM := gormclient.NewClient()
-	clientGORM.AutoMigrate(models.User{}, models.Message{}, models.Chat{})
+	clientGORM := GormClient.NewClient()
+	clientGORM.AutoMigrate(models.User{}, models.Message{}, models.Chat{}, models.Device{})
 
-	clientREDIS := redisclient.NewClient()
+	clientREDIS := RedisClient.NewClient()
+
+	firebaseApp, _, _ := FirebaseClient.SetupFirebase()
 
 	userRepo := storage.NewUserRepo(clientGORM, clientREDIS)
 	messageRepo := storage.NewMessageRepo(clientGORM)
 	chatRepo := storage.NewChatRepo(clientGORM)
+
 	tokenService := TokenService.NewService(clientREDIS)
+	chatService := ChatService.NewChatService(firebaseApp, clientREDIS, userRepo, messageRepo, chatRepo)
+
+	baseHandler := handlers.NewBaseHandler(userRepo, messageRepo, chatRepo, tokenService, chatService)
 
 	app := Config{
-		BaseHandler: handlers.NewBaseHandler(
-			userRepo,
-			messageRepo,
-			chatRepo,
-			*tokenService,
-		),
+		BaseHandler:  baseHandler,
 		UserRepo:     userRepo,
 		TokenService: tokenService,
 	}

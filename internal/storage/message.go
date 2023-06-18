@@ -39,6 +39,7 @@ func (r *MessageRepo) Create(message *models.Message) error {
 }
 
 func (r *MessageRepo) Update(message *models.Message) error {
+	//result := r.db.Session(&gorm.Session{FullSaveAssociations: true}).Save(&message)
 	result := r.db.Save(&message)
 	if result.Error != nil {
 		return result.Error
