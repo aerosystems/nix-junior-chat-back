@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// TokenDetails is the structure which holds data with JWT token_service
+// TokenDetails is the structure which holds data with JWT tokens
 type TokenDetails struct {
 	AccessToken  string
 	RefreshToken string

@@ -17,8 +17,8 @@ type TokensResponseBody struct {
 }
 
 // RefreshTokens godoc
-// @Summary refresh pair JWT token_service
-// @Tags token_service
+// @Summary refresh pair JWT tokens
+// @Tags tokens
 // @Accept  json
 // @Produce application/json
 // @Param login body RefreshTokenRequestBody true "raw request body, should contain Refresh Token"
@@ -53,10 +53,10 @@ func (h *BaseHandler) RefreshTokens(c echo.Context) error {
 	// drop Refresh Token from Redis Cache
 	_ = h.tokenService.DropCacheKey(refreshTokenClaims.RefreshUUID)
 
-	// create a pair of JWT token_service
+	// create a pair of JWT tokens
 	ts, err := h.tokenService.CreateToken(refreshTokenClaims.UserID)
 	if err != nil {
-		return ErrorResponse(c, http.StatusInternalServerError, "error creating token_service", err)
+		return ErrorResponse(c, http.StatusInternalServerError, "error creating tokens", err)
 	}
 
 	// add refresh token UUID to cache
@@ -70,5 +70,5 @@ func (h *BaseHandler) RefreshTokens(c echo.Context) error {
 		RefreshToken: ts.RefreshToken,
 	}
 
-	return SuccessResponse(c, http.StatusOK, fmt.Sprintf("token_service successfuly refreshed for User %d", refreshTokenClaims.UserID), tokens)
+	return SuccessResponse(c, http.StatusOK, fmt.Sprintf("tokens successfuly refreshed for User %d", refreshTokenClaims.UserID), tokens)
 }

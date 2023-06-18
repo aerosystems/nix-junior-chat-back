@@ -113,7 +113,7 @@ func (h *BaseHandler) UploadImage(c echo.Context) error {
 		return ErrorResponse(c, http.StatusInternalServerError, "error moving image", err)
 	}
 
-	if err := h.userRepo.UpdateWithAssociations(user); err != nil {
+	if err := h.userRepo.Update(user); err != nil {
 		return ErrorResponse(c, http.StatusInternalServerError, "error saving image", err)
 	}
 
@@ -167,7 +167,7 @@ func (h *BaseHandler) UpdateUsername(c echo.Context) error {
 
 	user.Username = requestPayload.Username
 
-	if err := h.userRepo.UpdateWithAssociations(user); err != nil {
+	if err := h.userRepo.Update(user); err != nil {
 		return ErrorResponse(c, http.StatusInternalServerError, "error updating user", err)
 	}
 

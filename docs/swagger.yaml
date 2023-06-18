@@ -1,5 +1,14 @@
 basePath: /
 definitions:
+  handlers.AddDeviceRequestBody:
+    properties:
+      token:
+        example: token
+        type: string
+      type:
+        example: web
+        type: string
+    type: object
   handlers.LoginRequestBody:
     properties:
       password:
@@ -81,6 +90,25 @@ definitions:
           $ref: '#/definitions/models.User'
         type: array
     type: object
+  models.Device:
+    properties:
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Chrome 90.0.4430.212 (Linux x86_64)
+        type: string
+      token:
+        example: c26BG3n3VJbI0i2H8aXZmG:APA91bGoG3iqJxidumkVRKCniXoA-QsYfSXpc6qhAiWcaIVtAUG9nNKsxoEkL8j4ZVezXVFzJDpIYS6JHtpcJ2af0686djcfKDltLqVLkuWFVHoEnz9NtKV9hgQmof7MURLYQsaokGfM
+        type: string
+      type:
+        description: web, android, ios
+        example: web
+        type: string
+      userId:
+        example: 1
+        type: integer
+    type: object
   models.Message:
     properties:
       chatId:
@@ -118,6 +146,10 @@ definitions:
       chats:
         items:
           $ref: '#/definitions/models.Chat'
+        type: array
+      devices:
+        items:
+          $ref: '#/definitions/models.Device'
         type: array
       followedUsers:
         items:
@@ -167,7 +199,7 @@ paths:
         - minimum of one special character
         - minimum 8 characters length
         - maximum 40 characters length
-        Response contain pair JWT token_service, use /v1/token_service/refresh for updating them
+        Response contain pair JWT tokens, use /v1/tokens/refresh for updating them
       parameters:
       - description: raw request body
         in: body
@@ -363,6 +395,46 @@ paths:
       summary: Get messages from chat by ChatId
       tags:
       - chat
+  /v1/devices:
+    post:
+      consumes:
+      - application/json
+      description: Set device Token(Firebase Cloud Messaging) for push notifications
+      parameters:
+      - description: raw request body
+        in: body
+        name: password
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.AddDeviceRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      security:
+      - BearerAuth: []
+      summary: Add device
+      tags:
+      - device
   /v1/search:
     get:
       consumes:
@@ -458,9 +530,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.Response'
-      summary: refresh pair JWT token_service
+      summary: refresh pair JWT tokens
       tags:
-      - token_service
+      - tokens
   /v1/user:
     get:
       consumes:

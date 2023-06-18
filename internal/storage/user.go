@@ -29,7 +29,7 @@ func (r *UserRepo) FindAll() (*[]models.User, error) {
 
 func (r *UserRepo) FindByID(id int) (*models.User, error) {
 	var user models.User
-	result := r.db.Preload("FollowedUsers").Preload("BlockedUsers").Preload("Chats.Users").Find(&user, id)
+	result := r.db.Preload("FollowedUsers").Preload("BlockedUsers").Preload("Chats.Users").Preload("Devices").Find(&user, id)
 	if result.Error != nil {
 		return nil, result.Error
 	}

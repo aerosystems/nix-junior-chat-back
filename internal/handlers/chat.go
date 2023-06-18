@@ -3,8 +3,6 @@ package handlers
 import (
 	"fmt"
 	"github.com/aerosystems/nix-junior-chat-back/internal/models"
-	ChatService "github.com/aerosystems/nix-junior-chat-back/internal/services/chat_service"
-	"github.com/aerosystems/nix-junior-chat-back/pkg/redisclient"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -33,7 +31,6 @@ var upgrader = websocket.Upgrader{
 // @Failure 401 {object} Response
 // @Router /ws/chat [get]
 func (h *BaseHandler) Chat(c echo.Context) error {
-	clientREDIS := redisclient.NewClient()
 	token := c.QueryParam("token")
 	accessTokenClaims, err := h.tokenService.DecodeAccessToken(token)
 	if err != nil {
@@ -62,13 +59,13 @@ func (h *BaseHandler) Chat(c echo.Context) error {
 	}
 	defer ws.Close()
 
-	if err := ChatService.OnConnect(user, ws, clientREDIS); err != nil {
-		ChatService.HandleWSError(err, "error sending message", ws)
+	if err := h.chatService.OnConnect(ws, user); err != nil {
+		h.chatService.HandleWSError(err, "error sending message", ws)
 	}
 
-	closeCh := ChatService.OnDisconnect(user, ws)
+	closeCh := h.chatService.OnDisconnect(ws, user)
 
-	ChatService.OnChannelMessage(ws, h.messageRepo, user)
+	h.chatService.OnChannelMessage(ws, user)
 
 loop:
 	for {
@@ -80,10 +77,9 @@ loop:
 			}
 			break loop
 		default:
-			ChatService.OnClientMessage(ws, clientREDIS, h.messageRepo, h.chatRepo, user)
+			h.chatService.OnClientMessage(ws, user)
 		}
 	}
-
 	return nil
 }
 
